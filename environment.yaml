@@ -1,4 +1,4 @@
-name: template-des
+name: stroke-rap-python
 channels:
   - conda-forge
 dependencies:
