@@ -20,8 +20,8 @@ Used [llm_simpy/notebooks/03_stroke/00_stress/](https://github.com/pythonhealthd
 
 Renamed and created environment.
 
-> **Reflections:**
-> 
+> 💡 **Reflections...**
+>
 > * Could encourage / suggestion Allyon 2021 [Keeping modelling notebooks with TRACE: Good for you and good for environmental research and management support](https://www.sciencedirect.com/science/article/pii/S1364815220309890).
 > * Template README could have space for orcid.
 > * Would have been handy for template README to give an example of giving credit to template.
@@ -172,19 +172,42 @@ Also, we could import these values from a file as well? For now though, will sti
 
 Then I ran pylint, and add pylint disablers for too many arguments.
 
-> **Reflections:**
-> 
-> * Handy to consider this way of structuring, for models with lots of parameters (which can be fairly common).
+> 💡Handy to consider this way of structuring, for models with lots of parameters (which can be fairly common).
 
 ## Clearing out
 
 I removed most files... it was overwhelming and tricky to work with, if I am changing and breaking things, and that breaks all my tests, and so on.
 
-> **Reflections:**
->
-> I realise the templates are a little daunting - and I wrote them! Getting started with this, I did the strategy of essentially "clearing things away" - and then referring back to them as I got set up again. Perhaps a more useable / accessible version of these templates would be structuring them as step-by-step quarto books. Because that's essentially how am I treating them - AND that is how I learnt best, when I was learning DES, is working through step-by-step with the HSMA book, building it up. So these templates are me having worked out how to implement everything we want - and then the applied examples is stress testing / real life testing, figuring out how we work through, where we make changes - and using all that then to write step-by-step tutorial books. One for Python, one for R. Step-by-step walkthough of RAP DES in XYZ.
+> 💡 I realise the templates are a little daunting - and I wrote them! Getting started with this, I did the strategy of essentially "clearing things away" - and then referring back to them as I got set up again. Perhaps a more useable / accessible version of these templates would be structuring them as step-by-step quarto books. Because that's essentially how am I treating them - AND that is how I learnt best, when I was learning DES, is working through step-by-step with the HSMA book, building it up. So these templates are me having worked out how to implement everything we want - and then the applied examples is stress testing / real life testing, figuring out how we work through, where we make changes - and using all that then to write step-by-step tutorial books. One for Python, one for R. Step-by-step walkthough of RAP DES in XYZ.
 
 ## Back to parameters
+
+### Refactoring
+
+With so many parameters, I feel like it maybe makes sense to seperate out the code more than I did in the template, so have changed from `model.py` to `parameters.py`
+
+> 💡 Could the location of functions in the template do with reorganising? What is clearest?
+
+### Playing with them
+
+I wanted to try out using the classes to make sure they work. I created a disposable notebook to play around with them in.
+
+> 💡 Should be clear how we do this early on, so can play about with it.
+
+I realised dataclasses don't allow you to call ASUArrivals(stroke=4), as they are recognised as attributes, but only recognised as parameters when you type hint ie.
+
+```
+@dataclass
+class ASUArrivals:
+    stroke: float = 1.2
+    tia: float = 9.3
+    neuro: float = 3.6
+    other: float = 3.2
+
+ASUArrivals(stroke=4)
+```
+
+I don't want this weird/hidden-feeling behaviour, especially as people say type hints shouldn't functionally affect your code in Python, and so will stick with normal classes.
 
 ### Preventing addition of new attributes
 
@@ -192,7 +215,10 @@ From writing the templates, I know how important it is that we prevent the addit
 
 In python, I do this using a method in the parameter class. This is also possible in R if set up as a R6Class, but I chose to use a function for simplicity, so that instead checks the parameters when they are input to model. The downside of that approach as it will check every time the model is called (i.e. with each replication).
 
-> **Reflections:**
-> 
-> * Emphasising the importance of this, that it's not just something to drop.
-> * Using the dataclasses, our provided method for preventing the addition of new attributes no longer works.
+However, an alternative would be for my parameter classes to **inherit** from a main class with that functionality.
+
+> 💡 Emphasise the importance of this, that it's not just something to drop.
+
+> 💡 When using the dataclasses, our provided method for preventing the addition of new attributes no longer works.
+
+I set up the **parent class**, and then add **tests** which check this is functioning properly.
