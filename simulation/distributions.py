@@ -18,7 +18,7 @@ class Exponential:
 
     This class is from Heather and Monks 2025, who adapted from Monks 2021.
     """
-    def __init__(self, mean, random_seed):
+    def __init__(self, mean, random_seed=None):
         """
         Initialises a new distribution.
 
@@ -57,7 +57,7 @@ class LogNormal:
 
     This class is adapted from Monks 2021.
     """
-    def __init__(self, mean, stdev, random_seed):
+    def __init__(self, mean, stdev, random_seed=None):
         """
         Initialises a new distribution.
 
@@ -117,7 +117,7 @@ class Discrete:
 
     This class is adapted from Monks 2021.
     """
-    def __init__(self, values, freq, random_seed):
+    def __init__(self, values, freq, random_seed=None):
         """
         Initialises a new distribution.
 
@@ -137,7 +137,7 @@ class Discrete:
         self.probabilities = self.freq / self.freq.sum()
         self.rand = np.random.default_rng(random_seed)
 
-    def sample(self, size):
+    def sample(self, size=None):
         """
         Generate sample.
 
