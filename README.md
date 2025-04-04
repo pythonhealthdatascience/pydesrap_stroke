@@ -4,6 +4,8 @@
 
 [![python](https://img.shields.io/badge/-Python_3.13.1-blue?logo=python&logoColor=white)](https://www.python.org/)
 ![licence](https://img.shields.io/badge/Licence-MIT-green.svg?labelColor=gray)
+[![Tests](https://github.com/pythonhealthdatascience/stroke_rap_python/actions/workflows/tests.yaml/badge.svg)](https://github.com/pythonhealthdatascience/stroke_rap_python/actions/workflows/tests.yaml)
+[![Linting](https://github.com/pythonhealthdatascience/stroke_rap_python/actions/workflows/lint.yaml/badge.svg)](https://github.com/pythonhealthdatascience/stroke_rap_python/actions/workflows/lint.yaml)
 [![ORCID: Heather](https://img.shields.io/badge/ORCID_Amy_Heather-0000--0002--6596--3479-brightgreen)](https://orcid.org/0000-0002-6596-3479)
 
 </div>

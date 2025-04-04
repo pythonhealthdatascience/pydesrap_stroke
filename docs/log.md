@@ -178,7 +178,7 @@ Then I ran pylint, and add pylint disablers for too many arguments.
 
 I removed most files... it was overwhelming and tricky to work with, if I am changing and breaking things, and that breaks all my tests, and so on.
 
-> 💡 I realise the templates are a little daunting - and I wrote them! Getting started with this, I did the strategy of essentially "clearing things away" - and then referring back to them as I got set up again. Perhaps a more useable / accessible version of these templates would be structuring them as step-by-step quarto books. Because that's essentially how am I treating them - AND that is how I learnt best, when I was learning DES, is working through step-by-step with the HSMA book, building it up. So these templates are me having worked out how to implement everything we want - and then the applied examples is stress testing / real life testing, figuring out how we work through, where we make changes - and using all that then to write step-by-step tutorial books. One for Python, one for R. Step-by-step walkthough of RAP DES in XYZ.
+> 💡 I realise the templates are a little daunting - and I wrote them! Getting started with this, I did the strategy of essentially "clearing things away" - and then referring back to them as I got set up again. Perhaps a more useable / accessible version of these templates would be structuring them as step-by-step quarto books. Because that"s essentially how am I treating them - AND that is how I learnt best, when I was learning DES, is working through step-by-step with the HSMA book, building it up. So these templates are me having worked out how to implement everything we want - and then the applied examples is stress testing / real life testing, figuring out how we work through, where we make changes - and using all that then to write step-by-step tutorial books. One for Python, one for R. Step-by-step walkthough of RAP DES in XYZ.
 
 ## Back to parameters
 
@@ -194,7 +194,7 @@ I wanted to try out using the classes to make sure they work. I created a dispos
 
 > 💡 Should be clear how we do this early on, so can play about with it.
 
-I realised dataclasses don't allow you to call ASUArrivals(stroke=4), as they are recognised as attributes, but only recognised as parameters when you type hint ie.
+I realised dataclasses don"t allow you to call ASUArrivals(stroke=4), as they are recognised as attributes, but only recognised as parameters when you type hint ie.
 
 ```
 @dataclass
@@ -207,7 +207,7 @@ class ASUArrivals:
 ASUArrivals(stroke=4)
 ```
 
-I don't want this weird/hidden-feeling behaviour, especially as people say type hints shouldn't functionally affect your code in Python, and so will stick with normal classes.
+I don"t want this weird/hidden-feeling behaviour, especially as people say type hints shouldn"t functionally affect your code in Python, and so will stick with normal classes.
 
 ### Preventing addition of new attributes
 
@@ -217,8 +217,514 @@ In python, I do this using a method in the parameter class. This is also possibl
 
 However, an alternative would be for my parameter classes to **inherit** from a main class with that functionality.
 
-> 💡 Emphasise the importance of this, that it's not just something to drop.
+> 💡 Emphasise the importance of this, that it"s not just something to drop.
 
 > 💡 When using the dataclasses, our provided method for preventing the addition of new attributes no longer works.
 
 I set up the **parent class**, and then add **tests** which check this is functioning properly.
+
+## Distributions
+
+The next logical step seemed to be to make **classes for each of the distributions** we planned to use, and then, to add **tests** for each of these.
+
+Decided to switch to simpler method of just importing `sim-tools`, and I add some extra tests for them to Tom"s sim-tools repository, removing those tests from this repository.
+
+> 💡 Mention that you can import sim-tools or copy over functions as it"s MIT licensed, just need to give appropriate credit. Mention that can add own tests.
+
+Relatedly, will switch to use **NumPy style docstrings** and **double quotes** to be consistent with the rest of Tom"s prior code-base (also HSMA use double quotes - though not any docstrings). Had chosen google before as prefer the appearance but, on reflection, it would be better to be consistent.
+
+## Patient generators
+
+The next step figures to be just setting up the basic model logic, starting with patient generators.
+
+We have patients arriving from four different sources, each with their own different inter-arrival time, so we need generator functions for each patient type.
+
+I add a basic warm up and data collection period to parameters:
+
+```
+class Param(RestrictAttributes):
+    """
+    Default parameters for simulation.
+    """
+    def __init__(
+        self,
+        asu_arrivals=ASUArrivals(),
+        rehab_arrivals=RehabArrivals(),
+        asu_los=ASULOS(),
+        rehab_los=RehabLOS(),
+        asu_routing=ASURouting(),
+        rehab_routing=RehabRouting(),
+        warm_up_period=0,
+        data_collection_period=100
+    ):
+    ...
+    self.warm_up_period = warm_up_period
+    self.data_collection_period = data_collection_period
+```
+
+A basic patient class and a basic model class which generates patients and saves them to a list.
+
+```
+%load_ext autoreload
+%autoreload 1
+%aimport simulation
+
+import numpy as np
+import simpy
+
+from sim_tools.distributions import Exponential
+from simulation.parameters import Param
+
+
+class Patient:
+    """
+    Represents a patient.
+
+    Attributes
+    ----------
+    patient_id: int, float or str
+        Unique patient identifier.
+    patient_type: str
+        Patient type ("stroke", "tia", "neuro" or "other").
+    arrival_time: float
+        Arrival time for the patient (in days).
+    """
+    def __init__(self, patient_id, patient_type):
+        """
+        Parameters
+        ----------
+        patient_id: int, float or str
+            Unique patient identifier.
+        patient_type: str
+            Patient type ("stroke", "tia", "neuro" or "other").
+        """
+        self.patient_id = patient_id
+        self.patient_type = patient_type
+        self.arrival_time = np.nan
+
+
+class Model:
+    def __init__(self, param, run_number):
+        # Set parameters
+        self.param = param
+        self.run_number = run_number
+
+        # Create SimPy environment
+        self.env = simpy.Environment()
+
+        # Create attributes to store results
+        # The patients list will store a reference to the patient objects, so
+        # any updates to the patient attributes after they are saved to the
+        # list, will be reflected in the list as well
+        self.patients = []
+
+        # Create seeds
+        ss = np.random.SeedSequence(entropy=self.run_number)
+        seeds = ss.spawn(4)
+
+        # Create distributions
+        self.asu_arrivals_stroke_dist = Exponential(
+            mean=self.param.asu_arrivals.stroke, random_seed=seeds[0])
+        self.asu_arrivals_tia_dist = Exponential(
+            mean=self.param.asu_arrivals.tia, random_seed=seeds[1])
+        self.asu_arrivals_neuro_dist = Exponential(
+            mean=self.param.asu_arrivals.neuro, random_seed=seeds[2])
+        self.asu_arrivals_other_dist = Exponential(
+            mean=self.param.asu_arrivals.other, random_seed=seeds[3])
+
+    def stroke_patient_generator(self):
+        """Generate stroke patient arrivals."""
+        while True:
+            # Sample and pass time to arrival
+            sampled_iat = self.asu_arrivals_stroke_dist.sample()
+            yield self.env.timeout(sampled_iat)
+
+            # Create a new patient, with ID based on length of patient list + 1
+            p = Patient(patient_id=len(self.patients) + 1,
+                        patient_type="stroke")
+
+            # Record their arrival time
+            p.arrival_time = self.env.now
+
+            # Print arrival time
+            print(f"Stroke patient arrival: {p.arrival_time}")
+
+            # Add to the patients list
+            self.patients.append(p)
+
+    def tia_patient_generator(self):
+        """Generate transient ischaemic attack (TIA) patient arrivals."""
+        while True:
+            # Sample and pass time to arrival
+            sampled_iat = self.asu_arrivals_tia_dist.sample()
+            yield self.env.timeout(sampled_iat)
+
+            # Create a new patient, with ID based on length of patient list + 1
+            p = Patient(patient_id=len(self.patients) + 1,
+                        patient_type="tia")
+
+            # Record their arrival time
+            p.arrival_time = self.env.now
+
+            # Print arrival time
+            print(f"TIA patient arrival: {p.arrival_time}")
+
+            # Add to the patients list
+            self.patients.append(p)
+
+    def neuro_patient_generator(self):
+        """Generate complex neurological patient arrivals."""
+        while True:
+            # Sample and pass time to arrival
+            sampled_iat = self.asu_arrivals_neuro_dist.sample()
+            yield self.env.timeout(sampled_iat)
+
+            # Create a new patient, with ID based on length of patient list + 1
+            p = Patient(patient_id=len(self.patients) + 1,
+                        patient_type="neuro")
+
+            # Record their arrival time
+            p.arrival_time = self.env.now
+
+            # Print arrival time
+            print(f"Neuro patient arrival: {p.arrival_time}")
+
+            # Add to the patients list
+            self.patients.append(p)
+
+    def other_patient_generator(self):
+        """Generate other patient arrivals."""
+        while True:
+            # Sample and pass time to arrival
+            sampled_iat = self.asu_arrivals_other_dist.sample()
+            yield self.env.timeout(sampled_iat)
+
+            # Create a new patient, with ID based on length of patient list + 1
+            p = Patient(patient_id=len(self.patients) + 1,
+                        patient_type="other")
+
+            # Record their arrival time
+            p.arrival_time = self.env.now
+
+            # Print arrival time
+            print(f"Other patient arrival: {p.arrival_time}")
+
+            # Add to the patients list
+            self.patients.append(p)
+
+    def run(self):
+        """Run the simulation."""
+        # Calculate the total run length
+        run_length = (self.param.warm_up_period +
+                      self.param.data_collection_period)
+
+        # Schedule patient generators to run during the simulation
+        self.env.process(self.stroke_patient_generator())
+        self.env.process(self.tia_patient_generator())
+        self.env.process(self.neuro_patient_generator())
+        self.env.process(self.other_patient_generator())
+
+        # Run the simulation
+        self.env.run(until=run_length)
+
+model = Model(param=Param(), run_number=0)
+model.run()
+```
+
+> 💡 This is alot in one go. Need to break down into steps, e.g.
+>
+> 1. Add warm-up and data collection parameters
+> 2. Create the patient class - can make it and then test it like:
+
+```
+# Test the Patient class
+test_patient = Patient(patient_id=1, patient_type="stroke")
+print(f"Patient ID: {test_patient.patient_id}")
+print(f"Patient Type: {test_patient.patient_type}")
+print(f"Initial arrival time: {test_patient.arrival_time}")
+```
+
+> 3. Create basic model structure (just param, run number, simpy environment, patients) - can make and run like:
+
+```
+# Test the basic model structure
+model = Model(param=Param(), run_number=0)
+print(f"Run number: {model.run_number}")
+print(f"Initial patient list: {model.patients}")
+```
+
+> 4. Add random number generation (create seeds, create distributions).
+
+```
+# Test the model with random number generation
+model = Model(param=Param(), run_number=42)
+print(f"Sample from stroke arrival distribution: {model.asu_arrivals_stroke_dist.sample()}")
+print(f"Sample from TIA arrival distribution: {model.asu_arrivals_tia_dist.sample()}")
+```
+
+> 5. Add single patient generator + run
+
+```
+# Test the model with stroke patient generator
+model = Model(param=Param(), run_number=42)
+model.run()
+```
+
+> 6. Add the other patient generators
+
+```
+# Test the model with all patient generators
+model = Model(param=Param(), run_number=42)
+model.run()
+```
+
+### Simplifying the patient generators
+
+However, having seperate generators for each patient type is *very* repetitive - particularly when we factor in the rehab ones - and the simpler thing would be to make one method for all arrivals.
+
+I did that, and made it a seperate method for better maintainability / clarity:
+
+```
+class Model:
+    """
+    Simulation model.
+
+    Attributes
+    ----------
+    param: Param
+        Run parameters.
+    run_number: int
+        Replication / run number.
+    env: simpy.Environment
+        Simulation environment.
+    patients: list
+        Stores the Patient objects.
+    distributions: dictionary
+        Contains the sampling distributions.
+    """
+    def __init__(self, param, run_number):
+        """
+        Parameters
+        ----------
+        param: Param
+            Run parameters.
+        run_number: int
+            Replication / run number.
+        """
+        # Set parameters
+        self.param = param
+        self.run_number = run_number
+
+        # Create SimPy environment
+        self.env = simpy.Environment()
+
+        # Create attributes to store results
+        # The patients list will store a reference to the patient objects, so
+        # any updates to the patient attributes after they are saved to the
+        # list, will be reflected in the list as well
+        self.patients = []
+
+        # Create seeds
+        ss = np.random.SeedSequence(entropy=self.run_number)
+        seed_generator = iter(ss.spawn(20))
+    
+        # Create distributions
+        self.create_distributions(seed_generator)
+
+    def create_distributions(self, seed_generator):
+        """
+        Creates distributions for sampling arrivals for all units and patient
+        types.
+
+        Parameters
+        ----------
+        seed_generator: Iterator
+            Iterator that generates random seeds.
+        """
+        # Create dictionary to store distributions
+        self.distributions = {}
+        # Loop through each unit
+        for unit, unit_param in [("asu", self.param.asu_arrivals),
+                                 ("rehab", self.param.rehab_arrivals)]:
+            # Make sub-dictionary to store that unit's distributions
+            self.distributions[unit] = {}
+            # Get a list of the patients in that unit (ignore other attributes)
+            patient_types = [attr for attr in dir(unit_param) if attr in
+                             ["stroke", "tia", "neuro", "other"]]
+            for patient_type in patient_types:
+                # Create distributions for each patient type in that unti
+                self.distributions[unit][patient_type] = Exponential(
+                    mean=getattr(unit_param, patient_type),
+                    random_seed=next(seed_generator)
+                )
+
+    def patient_generator(self, patient_type, distribution, unit):
+        """
+        Generic patient generator for any patient type and unit.
+
+        Parameters
+        ----------
+        patient_type: str
+            Type of patient ("stroke", "tia", "neuro", "other").
+        distribution: Distribution
+            The inter-arrival time distribution to sample from.
+        unit: str
+            The unit the patient is arriving at ("asu", "rehab").
+        """
+        while True:
+            # Sample and pass time to arrival
+            sampled_iat = distribution.sample()
+            yield self.env.timeout(sampled_iat)
+
+            # Create a new patient
+            p = Patient(
+                patient_id=len(self.patients)+1,
+                patient_type=patient_type
+            )
+
+            # Record arrival time
+            p.arrival_time = self.env.now
+
+            # Print arrival time
+            print(f"{patient_type} patient arrival at {unit}: {p.arrival_time}")
+
+            # Add to the patients list
+            self.patients.append(p)
+
+    def run(self):
+        """
+        Run the simulation.
+        """
+        # Calculate the total run length
+        run_length = (self.param.warm_up_period +
+                      self.param.data_collection_period)
+
+        # Schedule patient generators to run during the simulation
+        for unit, patient_types in self.distributions.items():
+            for patient_type, distribution in patient_types.items():
+                self.env.process(
+                    self.patient_generator(
+                        patient_type=patient_type,
+                        distribution=distribution,
+                        unit=unit
+                    )
+                )
+
+        # Run the simulation
+        self.env.run(until=run_length)
+```
+
+## Tests
+
+We could add some basic tests now, e.g.
+
+* Check that distributions are created for all patients (eg. "stroke" in distributions asu, "tia" in ...)
+* Run with no warm-up and check env.now == param.data_collection_period
+* Run with no data collection and check env.now == param.warm_up 
+
+Although as not actually doing warm-up logic yet, going down that path a bit premature.
+
+> 💡 Start with basic run time, then change to warm up + data collection
+
+> 💡 Maybe don't need to be mentioning tests at this stage yet.
+
+```
+class MockParam:
+    """
+    Mock parameter class.
+    """
+    def __init__(self):
+        """
+        Initialise with specific run periods and arrival parameters.
+        """
+        self.warm_up_period = 10
+        self.data_collection_period = 20
+
+        self.asu_arrivals = namedtuple(
+            "ASUArrivals", ["stroke", "tia", "neuro", "other"])(
+            stroke=5, tia=7, neuro=10, other=15
+        )
+        self.rehab_arrivals = namedtuple(
+            "RehabArrivals", ["stroke", "tia", "other"])(
+            stroke=8, tia=12, other=20
+        )
+
+
+def test_create_distributions():
+    """
+    Test that distributions are created correctly for all units and patient
+    types specified in MockParam.
+    """
+    param = MockParam()
+    model = Model(param, run_number=42)
+
+    # Check ASU distributions
+    assert len(model.distributions["asu"]) == 4
+    assert "stroke" in model.distributions["asu"]
+    assert "tia" in model.distributions["asu"]
+    assert "neuro" in model.distributions["asu"]
+    assert "other" in model.distributions["asu"]
+
+    # Check Rehab distributions
+    assert len(model.distributions["rehab"]) == 3
+    assert "stroke" in model.distributions["rehab"]
+    assert "tia" in model.distributions["rehab"]
+    assert "other" in model.distributions["rehab"]
+    assert "neuro" not in model.distributions["rehab"]
+
+    # Check that all distributions are Exponential
+    for _, unit_dict in model.distributions.items():
+        for patient_type in unit_dict:
+            assert isinstance(unit_dict[patient_type], Exponential)
+
+
+def test_sampling_seed_reproducibility():
+    """
+    Test that using the same seed produces the same results when sampling
+    from one of the arrival distributions.
+    """
+    param = MockParam()
+
+    # Create two models with the same seed
+    model1 = Model(param, run_number=123)
+    model2 = Model(param, run_number=123)
+
+    # Sample from a distribution in both models
+    samples1 = [model1.distributions["asu"]["stroke"].sample()
+                for _ in range(10)]
+    samples2 = [model2.distributions["asu"]["stroke"].sample()
+                for _ in range(10)]
+
+    # Check that the samples are the same
+    np.testing.assert_array_almost_equal(samples1, samples2)
+
+
+def test_run_time():
+    """
+    Check that the run length is correct with varying warm-up and data
+    collection periods.
+    """
+    param = MockParam()
+
+    # Test with zero warm-up period
+    param.warm_up_period = 0
+    model = Model(param, run_number=42)
+    model.run()
+    assert model.env.now == param.data_collection_period
+
+    # Test with zero data collection period
+    param.warm_up_period = 10
+    param.data_collection_period = 0
+    model = Model(param, run_number=42)
+    model.run()
+    assert model.env.now == 10
+    # assert len(model.patients) == 0
+
+    # Test with warm-up and data collection period
+    param.warm_up_period = 12
+    param.data_collection_period = 9
+    model = Model(param, run_number=42)
+    model.run()
+    assert model.env.now == 21
+    assert len(model.patients) > 0
+```
