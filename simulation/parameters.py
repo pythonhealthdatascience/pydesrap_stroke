@@ -17,8 +17,8 @@ class RestrictAttributesMeta(type):
     def __call__(cls, *args, **kwargs):
         # Create instance using the standard method
         instance = super().__call__(*args, **kwargs)
-        # Set the '_initialised' flag to True, marking end of initialisation
-        instance.__dict__['_initialised'] = True
+        # Set the "_initialised" flag to True, marking end of initialisation
+        instance.__dict__["_initialised"] = True
         return instance
 
 
@@ -39,24 +39,26 @@ class RestrictAttributes(metaclass=RestrictAttributesMeta):
         """
         Prevent addition of new attributes.
 
-        Arguments:
-            name (str):
-                The name of the attribute to set.
-            value (Any):
-                The value to assign to the attribute.
+        Parameters
+        ----------
+        name: str
+            The name of the attribute to set.
+        value: any
+            The value to assign to the attribute.
 
-        Raises:
-            AttributeError:
-                If `name` is not an existing attribute and an attempt is made
-                to add it to the class instance.
+        Raises
+        ------
+        AttributeError
+            If `name` is not an existing attribute and an attempt is made
+            to add it to the class instance.
         """
-        # Check if the instance is initialised and the attribute doesn't exist
-        if hasattr(self, '_initialised') and not hasattr(self, name):
+        # Check if the instance is initialised and the attribute doesn"t exist
+        if hasattr(self, "_initialised") and not hasattr(self, name):
             # Get a list of existing attributes for the error message
-            existing = ', '.join(self.__dict__.keys())
+            existing = ", ".join(self.__dict__.keys())
             raise AttributeError(
-                f'Cannot add new attribute "{name}" - only possible to ' +
-                f'modify existing attributes: {existing}.'
+                f"Cannot add new attribute '{name}' - only possible to " +
+                f"modify existing attributes: {existing}."
             )
         # If checks pass, set the attribute using the standard method
         object.__setattr__(self, name, value)
@@ -71,15 +73,16 @@ class ASUArrivals(RestrictAttributes):
     """
     def __init__(self, stroke=1.2, tia=9.3, neuro=3.6, other=3.2):
         """
-        Arguments:
-            stroke (float):
-                Stroke patient.
-            tia (float):
-                Transient ischaemic attack (TIA) patient.
-            neuro (float):
-                Complex neurological patient.
-            other (float):
-                Other patient types (including medical outliers).
+        Parameters
+        ----------
+        stroke: float
+            Stroke patient.
+        tia: float
+            Transient ischaemic attack (TIA) patient.
+        neuro: float
+            Complex neurological patient.
+        other: float
+            Other patient types (including medical outliers).
         """
         self.stroke = stroke
         self.tia = tia
@@ -96,13 +99,14 @@ class RehabArrivals(RestrictAttributes):
     """
     def __init__(self, stroke=21.8, neuro=31.7, other=28.6):
         """
-        Arguments:
-            stroke (float):
-                Stroke patient.
-            neuro (float):
-                Complex neurological patient.
-            other (float):
-                Other patient types.
+        Parameters
+        ----------
+        stroke: float
+            Stroke patient.
+        neuro: float
+            Complex neurological patient.
+        other: float
+            Other patient types.
         """
         self.stroke = stroke
         self.neuro = neuro
@@ -120,28 +124,29 @@ class ASULOS(RestrictAttributes):
         neuro_mean=4.0, neuro_sd=5.0, other_mean=3.8, other_sd=5.2
     ):
         """
-        Arguments:
-            stroke_no_esd_mean (float):
-                Mean LOS for stroke patients without early support discharge
-                (ESD) services.
-            stroke_no_esd_sd (float):
-                SD of LOS for stroke patients without ESD.
-            stroke_esd_mean (float):
-                Mean LOS for stroke patients with ESD.
-            stroke_esd_sd (float):
-                SD of LOS for stroke patients with ESD.
-            tia_mean (float):
-                Mean LOS for transient ischemic attack (TIA) patients.
-            tia_sd (float):
-                SD of LOS for TIA patients.
-            neuro_mean (float):
-                Mean LOS for complex neurological patients.
-            neuro_sd (float):
-                SD of LOS for complex neurological patients.
-            other_mean (float):
-                Mean LOS for other patient types.
-            other_sd (float):
-                SD of LOS for other patient types.
+        Parameters
+        ----------
+        stroke_no_esd_mean: float
+            Mean LOS for stroke patients without early support discharge (ESD)
+            services.
+        stroke_no_esd_sd: float
+            SD of LOS for stroke patients without ESD.
+        stroke_esd_mean: float
+            Mean LOS for stroke patients with ESD.
+        stroke_esd_sd: float
+            SD of LOS for stroke patients with ESD.
+        tia_mean: float
+            Mean LOS for transient ischemic attack (TIA) patients.
+        tia_sd: float
+            SD of LOS for TIA patients.
+        neuro_mean: float
+            Mean LOS for complex neurological patients.
+        neuro_sd: float
+            SD of LOS for complex neurological patients.
+        other_mean: float
+            Mean LOS for other patient types.
+        other_sd: float
+            SD of LOS for other patient types.
         """
         self.stroke_no_esd_mean = stroke_no_esd_mean
         self.stroke_no_esd_sd = stroke_no_esd_sd
@@ -166,28 +171,29 @@ class RehabLOS(RestrictAttributes):
         neuro_mean=27.6, neuro_sd=28.4, other_mean=16.1, other_sd=14.1
     ):
         """
-        Arguments:
-            stroke_no_esd_mean (float):
-                Mean LOS for stroke patients without early support discharge
-                (ESD) services.
-            stroke_no_esd_sd (float):
-                SD of LOS for stroke patients without ESD.
-            stroke_esd_mean (float):
-                Mean LOS for stroke patients with ESD.
-            stroke_esd_sd (float):
-                SD of LOS for stroke patients with ESD.
-            tia_mean (float):
-                Mean LOS for transient ischemic attack (TIA) patients.
-            tia_sd (float):
-                SD of LOS for TIA patients.
-            neuro_mean (float):
-                Mean LOS for complex neurological patients.
-            neuro_sd (float):
-                SD of LOS for complex neurological patients.
-            other_mean (float):
-                Mean LOS for other patient types.
-            other_sd (float):
-                SD of LOS for other patient types.
+        Parameters
+        ----------
+        stroke_no_esd_mean: float
+            Mean LOS for stroke patients without early support discharge (ESD)
+            services.
+        stroke_no_esd_sd: float
+            SD of LOS for stroke patients without ESD.
+        stroke_esd_mean: float
+            Mean LOS for stroke patients with ESD.
+        stroke_esd_sd: float
+            SD of LOS for stroke patients with ESD.
+        tia_mean: float
+            Mean LOS for transient ischemic attack (TIA) patients.
+        tia_sd: float
+            SD of LOS for TIA patients.
+        neuro_mean: float
+            Mean LOS for complex neurological patients.
+        neuro_sd: float
+            SD of LOS for complex neurological patients.
+        other_mean: float
+            Mean LOS for other patient types.
+        other_sd: float
+            SD of LOS for other patient types.
         """
         self.stroke_no_esd_mean = stroke_no_esd_mean
         self.stroke_no_esd_sd = stroke_no_esd_sd
@@ -213,32 +219,33 @@ class ASURouting(RestrictAttributes):
         other_stroke=0.63, other_tia=0.98, other_neuro=0.84, other_other=0.85
     ):
         """
-        Arguments:
-            rehab_stroke (float):
-                Stroke patient to rehabilitation unit.
-            rehab_tia (float):
-                Transient ischemic attack (TIA) patient to rehabilitation unit.
-            rehab_neuro (float):
-                Complex neurological patient to rehabilitation unit.
-            rehab_other (float):
-                Other patient type to rehabilitation unit.
-            esd_stroke (float):
-                Stroke patient to early support discharge (ESD) services.
-            esd_tia (float):
-                TIA patient to ESD.
-            esd_neuro (float):
-                Complex neurological patient to ESD.
-            esd_other (float):
-                Other patient type to ESD.
-            other_stroke (float):
-                Stroke patient to other destinations (e.g., own home, care
-                home, mortality).
-            other_tia (float):
-                TIA patient to other destinations.
-            other_neuro (float):
-                Complex neurological patient to other destinations.
-            other_other (float):
-                Other patient type to other destinations.
+        Parameters
+        ----------
+        rehab_stroke: float
+            Stroke patient to rehabilitation unit.
+        rehab_tia: float
+            Transient ischemic attack (TIA) patient to rehabilitation unit.
+        rehab_neuro: float
+            Complex neurological patient to rehabilitation unit.
+        rehab_other: float
+            Other patient type to rehabilitation unit.
+        esd_stroke: float
+            Stroke patient to early support discharge (ESD) services.
+        esd_tia: float
+            TIA patient to ESD.
+        esd_neuro: float
+            Complex neurological patient to ESD.
+        esd_other: float
+            Other patient type to ESD.
+        other_stroke: float
+            Stroke patient to other destinations (e.g., own home, care
+            home, mortality).
+        other_tia: float
+            TIA patient to other destinations.
+        other_neuro: float
+            Complex neurological patient to other destinations.
+        other_other: float
+            Other patient type to other destinations.
         """
         self.rehab_stroke = rehab_stroke
         self.rehab_tia = rehab_tia
@@ -265,24 +272,25 @@ class RehabRouting(RestrictAttributes):
         other_neuro=0.91, other_other=0.88
     ):
         """
-        Arguments:
-            esd_stroke (float):
-                Stroke patient to early support discharge (ESD) services.
-            esd_tia (float):
-                Transient ischemic attack (TIA) patient to ESD.
-            esd_neuro (float):
-                Complex neurological patient to ESD.
-            esd_other (float):
-                Other patient type to ESD.
-            other_stroke (float):
-                Stroke patient to other destinations (e.g., own home, care
-                home, mortality).
-            other_tia (float):
-                TIA patient to other destinations.
-            other_neuro (float):
-                Complex neurological patient to other destinations.
-            other_other (float):
-                Other patient type to other destinations.
+        Parameters
+        ----------
+        esd_stroke: float
+            Stroke patient to early support discharge (ESD) services.
+        esd_tia: float
+            Transient ischemic attack (TIA) patient to ESD.
+        esd_neuro: float
+            Complex neurological patient to ESD.
+        esd_other: float
+            Other patient type to ESD.
+        other_stroke: float
+            Stroke patient to other destinations (e.g., own home, care home,
+            mortality).
+        other_tia: float
+            TIA patient to other destinations.
+        other_neuro: float
+            Complex neurological patient to other destinations.
+        other_other: float
+            Other patient type to other destinations.
         """
         self.esd_stroke = esd_stroke
         self.esd_tia = esd_tia
@@ -305,25 +313,32 @@ class Param(RestrictAttributes):
         asu_los=ASULOS(),
         rehab_los=RehabLOS(),
         asu_routing=ASURouting(),
-        rehab_routing=RehabRouting()
+        rehab_routing=RehabRouting(),
+        warm_up_period=0,
+        data_collection_period=20
     ):
         """
         Initialise a parameter set for the simulation.
 
-        Arguments:
-            asu_arrivals (ASUArrivals):
-                Arrival rates to the acute stroke unit (ASU).
-            rehab_arrivals (RehabArrivals):
-                Arrival rates to the rehabilitation unit.
-            asu_los (ASULOS):
-                Length of stay (LOS) distributions for patients in the ASU.
-            rehab_los (RehabLOS):
-                LOS distributions for patients in the rehabilitation unit.
-            asu_routing (ASURouting):
-                Transfer probabilities from the ASU to other destinations.
-            rehab_routing (RehabRouting):
-                Transfer probabilities from the rehabilitation unit to other
-                destinations.
+        Parameters
+        ----------
+        asu_arrivals: ASUArrivals
+            Arrival rates to the acute stroke unit (ASU) in days.
+        rehab_arrivals: RehabArrivals
+            Arrival rates to the rehabilitation unit in days.
+        asu_los: ASULOS
+            Length of stay (LOS) distributions for patients in the ASU in days.
+        rehab_los: RehabLOS
+            LOS distributions for patients in the rehabilitation unit in days.
+        asu_routing: ASURouting
+            Transfer probabilities from the ASU to other destinations.
+        rehab_routing: RehabRouting
+            Transfer probabilities from the rehabilitation unit to other
+            destinations.
+        warm_up_period: int
+            Length of the warm-up period.
+        data_collection_period: int
+            Length of the data collection period.
         """
         self.asu_arrivals = asu_arrivals
         self.rehab_arrivals = rehab_arrivals
@@ -331,3 +346,5 @@ class Param(RestrictAttributes):
         self.rehab_los = rehab_los
         self.asu_routing = asu_routing
         self.rehab_routing = rehab_routing
+        self.warm_up_period = warm_up_period
+        self.data_collection_period = data_collection_period

@@ -2,7 +2,6 @@
 Unit tests
 """
 
-import numpy as np
 import pytest
 
 from simulation.parameters import (
@@ -10,7 +9,7 @@ from simulation.parameters import (
     ASURouting, RehabRouting, Param)
 
 
-@pytest.mark.parametrize('class_to_test', [
+@pytest.mark.parametrize("class_to_test", [
     ASUArrivals, RehabArrivals, ASULOS, RehabLOS,
     ASURouting, RehabRouting, Param])
 def test_new_attribute(class_to_test):
@@ -26,5 +25,5 @@ def test_new_attribute(class_to_test):
 
     # Attempt to add a new attribute
     with pytest.raises(AttributeError,
-                       match='only possible to modify existing attributes'):
-        setattr(instance, 'new_entry', 3)
+                       match="only possible to modify existing attributes"):
+        setattr(instance, "new_entry", 3)
