@@ -4,7 +4,7 @@ Code for the simulation.
 
 import numpy as np
 import simpy
-from sim_tools.distributions import Exponential
+from sim_tools.distributions import Exponential, Discrete, Lognormal
 
 
 class Patient:
@@ -17,8 +17,10 @@ class Patient:
         Unique patient identifier.
     patient_type: str
         Patient type ("stroke", "tia", "neuro" or "other").
-    arrival_time: float
-        Arrival time for the patient (in days).
+    asu_arrival_time: float
+        Arrival time at the acute stroke unit (ASU) for the patient (in days).
+    post_asu_destination: str
+        Destination after the ASU ("rehab", "esd", "other").
     """
     def __init__(self, patient_id, patient_type):
         """
@@ -31,7 +33,8 @@ class Patient:
         """
         self.patient_id = patient_id
         self.patient_type = patient_type
-        self.arrival_time = np.nan
+        self.asu_arrival_time = np.nan
+        self.post_asu_destination = np.nan
 
 
 class Model:
@@ -75,42 +78,80 @@ class Model:
 
         # Create seeds
         ss = np.random.SeedSequence(entropy=self.run_number)
-        seed_generator = iter(ss.spawn(20))
+        self.seed_generator = iter(ss.spawn(30))
 
-        # Create distributions
-        self.create_distributions(seed_generator)
+        # Create arrival distributions
+        self.arrival_dist = self.create_distributions(
+            asu_param=self.param.asu_arrivals,
+            rehab_param=self.param.rehab_arrivals,
+            distribution_type="exponential")
 
-    def create_distributions(self, seed_generator):
+        # Create routing sampling distributions
+        self.routing_dist = self.create_distributions(
+            asu_param=self.param.asu_routing,
+            rehab_param=self.param.rehab_routing,
+            distribution_type="discrete")
+
+        # Create length of stay (LOS) sampling distributions
+        self.los_dist = self.create_distributions(
+            asu_param=self.param.asu_los,
+            rehab_param=self.param.rehab_los,
+            distribution_type="lognormal")
+
+    def create_distributions(self, asu_param, rehab_param, distribution_type):
         """
-        Creates distributions for sampling arrivals for all units and patient
-        types.
+        Create a nested dictionary with two items: "asu" and "rehab". Each
+        then contains a set of distributions by patient type.
 
         Parameters
         ----------
-        seed_generator: Iterator
-            Iterator that generates random seeds.
+        asu_param: Class
+            Acute stroke unit (ASU) parameters.
+        rehab_param: Class
+            Rehabilitation unit parameters.
+        distribution_type: str
+            Name of the distribution to use ("exponential", "discrete",
+            "lognormal").
         """
         # Create dictionary to store distributions
-        self.distributions = {}
+        distributions = {}
 
         # Loop through each unit
-        for unit, unit_param in [("asu", self.param.asu_arrivals),
-                                 ("rehab", self.param.rehab_arrivals)]:
+        for unit, unit_param in [("asu", asu_param), ("rehab", rehab_param)]:
 
             # Make sub-dictionary to store that unit's distributions
-            self.distributions[unit] = {}
+            distributions[unit] = {}
 
             # Get a list of the patients in that unit (ignore other attributes)
             patient_types = [attr for attr in dir(unit_param) if attr in
-                             ["stroke", "tia", "neuro", "other"]]
+                             ["stroke", "stroke_esd", "stroke_noesd",
+                              "tia", "neuro", "other"]]
 
+            # For each patient type...
             for patient_type in patient_types:
 
-                # Create distributions for each patient type in that unti
-                self.distributions[unit][patient_type] = Exponential(
-                    mean=getattr(unit_param, patient_type),
-                    random_seed=next(seed_generator)
-                )
+                # Get the entry for that patient
+                patient_param = getattr(unit_param, patient_type)
+
+                # Create distributions of specified type
+                if distribution_type == "exponential":
+                    distributions[unit][patient_type] = Exponential(
+                        mean=patient_param,
+                        random_seed=next(self.seed_generator)
+                    )
+                elif distribution_type == "discrete":
+                    distributions[unit][patient_type] = Discrete(
+                        values=list(patient_param.keys()),
+                        freq=list(patient_param.values()),
+                        random_seed=next(self.seed_generator)
+                    )
+                elif distribution_type == "lognormal":
+                    distributions[unit][patient_type] = Lognormal(
+                        mean=patient_param["mean"],
+                        stdev=patient_param["sd"],
+                        random_seed=next(self.seed_generator)
+                    )
+        return distributions
 
     def patient_generator(self, patient_type, distribution, unit):
         """
@@ -130,20 +171,20 @@ class Model:
             sampled_iat = distribution.sample()
             yield self.env.timeout(sampled_iat)
 
-            # Create a new patient
-            p = Patient(
-                patient_id=len(self.patients)+1,
-                patient_type=patient_type
-            )
-
-            # Record arrival time
-            p.arrival_time = self.env.now
-
-            # Print arrival time
-            print(f"{patient_type} patient arrive at {unit}: {p.arrival_time}")
-
-            # Add to the patients list
+            # Create a new patient and add to the patients list
+            p = Patient(patient_id=len(self.patients)+1,
+                        patient_type=patient_type)
             self.patients.append(p)
+
+            # Record and print arrival time
+            p.asu_arrival_time = self.env.now
+            print(f"{patient_type} patient arrive at {unit}: " +
+                  f"{p.asu_arrival_time}.")
+
+            # Sample destination after asu
+            if unit == "asu":
+                p.post_asu_destination = (
+                    self.routing_dist["asu"][patient_type].sample())
 
     def run(self):
         """
@@ -154,7 +195,7 @@ class Model:
                       self.param.data_collection_period)
 
         # Schedule patient generators to run during the simulation
-        for unit, patient_types in self.distributions.items():
+        for unit, patient_types in self.arrival_dist.items():
             for patient_type, distribution in patient_types.items():
                 self.env.process(
                     self.patient_generator(
