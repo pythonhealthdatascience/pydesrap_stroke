@@ -21,6 +21,9 @@ class Patient:
         Arrival time at the acute stroke unit (ASU) for the patient (in days).
     post_asu_destination: str
         Destination after the ASU ("rehab", "esd", "other").
+    routing_patient_type: str
+        Routing patient type ("stroke_esd", "stroke_noesd", "tia", "neuro" or
+        "other").
     """
     def __init__(self, patient_id, patient_type):
         """
@@ -35,6 +38,7 @@ class Patient:
         self.patient_type = patient_type
         self.asu_arrival_time = np.nan
         self.post_asu_destination = np.nan
+        self.routing_patient_type = np.nan
 
 
 class Model:
@@ -153,7 +157,7 @@ class Model:
                     )
         return distributions
 
-    def patient_generator(self, patient_type, distribution, unit):
+    def patient_generator(self, patient_type, unit):
         """
         Generic patient generator for any patient type and unit.
 
@@ -161,14 +165,12 @@ class Model:
         ----------
         patient_type: str
             Type of patient ("stroke", "tia", "neuro", "other").
-        distribution: Distribution
-            The inter-arrival time distribution to sample from.
         unit: str
             The unit the patient is arriving at ("asu", "rehab").
         """
         while True:
             # Sample and pass time to arrival
-            sampled_iat = distribution.sample()
+            sampled_iat = self.arrival_dist[unit][patient_type].sample()
             yield self.env.timeout(sampled_iat)
 
             # Create a new patient and add to the patients list
@@ -181,10 +183,21 @@ class Model:
             print(f"{patient_type} patient arrive at {unit}: " +
                   f"{p.asu_arrival_time}.")
 
-            # Sample destination after asu
+            # Sample destination after ASU (we do this immediately on arrival
+            # in the ASU, as the destination influences the length of stay)
             if unit == "asu":
                 p.post_asu_destination = (
-                    self.routing_dist["asu"][patient_type].sample())
+                    self.routing_dist["asu"][p.patient_type].sample())
+
+                # If it is a stroke patient on the ASU, find out if they are
+                # going to the ESD (stroke_esd) or not (stroke_noesd)
+                if p.patient_type == "stroke":
+                    if p.post_asu_destination == "esd":
+                        p.routing_patient_type = "stroke_esd"
+                    else:
+                        p.routing_patient_type = "stroke_noesd"
+                else:
+                    p.routing_patient_type = p.patient_type
 
     def run(self):
         """
@@ -195,12 +208,13 @@ class Model:
                       self.param.data_collection_period)
 
         # Schedule patient generators to run during the simulation
+        # For each unit...
         for unit, patient_types in self.arrival_dist.items():
-            for patient_type, distribution in patient_types.items():
+            # For each patient...
+            for patient_type, _ in patient_types.items():
                 self.env.process(
                     self.patient_generator(
                         patient_type=patient_type,
-                        distribution=distribution,
                         unit=unit
                     )
                 )
