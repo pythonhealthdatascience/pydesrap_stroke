@@ -419,7 +419,9 @@ class Param(RestrictAttributes):
         rehab_routing=RehabRouting(),
         warm_up_period=365*3,  # 3 years
         data_collection_period=365*5,  # 5 years
+        number_of_runs=150,
         audit_interval=1,
+        cores=1,
         log_to_console=False,
         log_to_file=False
     ):
@@ -445,8 +447,15 @@ class Param(RestrictAttributes):
             Length of the warm-up period.
         data_collection_period: int
             Length of the data collection period.
+        number_of_runs: int
+            The number of runs (i.e. replications), defining how many times to
+            re-run the simulation (with different random numbers).
         audit_interval: float
             Frequency of simulation audits in days.
+        cores: int
+            Number of CPU cores to use for parallel execution. Set to desired
+            number, or to -1 to use all available cores. For sequential
+            execution, set to 1.
         log_to_console: boolean
             Whether to print log messages to the console.
         log_to_file: boolean
@@ -461,7 +470,9 @@ class Param(RestrictAttributes):
         self.rehab_routing = rehab_routing
         self.warm_up_period = warm_up_period
         self.data_collection_period = data_collection_period
+        self.number_of_runs = number_of_runs
         self.audit_interval = audit_interval
+        self.cores = cores
 
         # Set up logger
         self.logger = SimLogger(log_to_console=log_to_console,
