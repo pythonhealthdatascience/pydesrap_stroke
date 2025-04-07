@@ -416,7 +416,8 @@ class Param(RestrictAttributes):
         asu_routing=ASURouting(),
         rehab_routing=RehabRouting(),
         warm_up_period=0,
-        data_collection_period=20
+        data_collection_period=20,
+        audit_interval=1
     ):
         """
         Initialise a parameter set for the simulation.
@@ -440,6 +441,8 @@ class Param(RestrictAttributes):
             Length of the warm-up period.
         data_collection_period: int
             Length of the data collection period.
+        audit_interval: float
+            Frequency of simulation audits in days.
         """
         self.asu_arrivals = asu_arrivals
         self.rehab_arrivals = rehab_arrivals
@@ -449,3 +452,4 @@ class Param(RestrictAttributes):
         self.rehab_routing = rehab_routing
         self.warm_up_period = warm_up_period
         self.data_collection_period = data_collection_period
+        self.audit_interval = audit_interval

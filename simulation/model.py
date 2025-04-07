@@ -59,12 +59,27 @@ class Model:
         Run parameters.
     run_number: int
         Replication / run number.
+    audit_interval: float
+        Frequency of simulation audits in days.
     env: simpy.Environment
         Simulation environment.
     patients: list
         Stores the Patient objects.
-    distributions: dictionary
-        Contains the sampling distributions.
+    asu_occupancy: int
+        Number of patients currently in the acute stroke unit (ASU).
+    rehab_occupancy: int
+        Number of patients currently in the rehabilitation unit.
+    audit_list: list
+        List to store metrics recorded at regular intervals.
+    seed_generator: iterator
+        An iterator that yields independent random seeds when iterated over.
+    arrival_dist: dictionary
+        The arrival sampling distributions by unit and patient type.
+    routing_dist: dictionary
+        The routing sampling distributions by unit and patient type.
+    los_dist: dictionary
+        The length of stay (LOS) sampling distributions by unit and patient
+        type.
     """
     def __init__(self, param, run_number):
         """
@@ -78,6 +93,7 @@ class Model:
         # Set parameters
         self.param = param
         self.run_number = run_number
+        self.audit_interval = self.param.audit_interval
 
         # Create SimPy environment
         self.env = simpy.Environment()
@@ -87,12 +103,15 @@ class Model:
         # any updates to the patient attributes after they are saved to the
         # list, will be reflected in the list as well
         self.patients = []
+        self.asu_occupancy = 0
+        self.rehab_occupancy = 0
+        self.audit_list = []
 
-        # Create seeds
+        # Create seeds, spawning enough for all the sampling distributions
         ss = np.random.SeedSequence(entropy=self.run_number)
         self.seed_generator = iter(ss.spawn(30))
 
-        # Create arrival distributions
+        # Create arrival sampling distributions
         self.arrival_dist = self.create_distributions(
             asu_param=self.param.asu_arrivals,
             rehab_param=self.param.rehab_arrivals,
@@ -124,6 +143,12 @@ class Model:
         distribution_type: str
             Name of the distribution to use ("exponential", "discrete",
             "lognormal").
+
+        Returns
+        -------
+        distributions: dictionary
+            Dictionary with "asu" and "rehab", which each then contains a
+            dictionary of sampling distributions by patient type.
         """
         # Create dictionary to store distributions
         distributions = {}
@@ -205,6 +230,9 @@ class Model:
         patient: Patient
             Patient.
         """
+        # Add to occupancy count
+        self.asu_occupancy += 1
+
         # Print the arrival time
         print(f"Patient {patient.patient_id} ({patient.patient_type}) " +
               f"arrive at ASU: {patient.asu_arrival_time}.")
@@ -237,11 +265,17 @@ class Model:
             patient.rehab_arrival_time = self.env.now
             self.env.process(self.rehab_unit(patient))
 
+        # Remove from occupancy count
+        self.asu_occupancy -= 1
+
     def rehab_unit(self, patient):
         """
         Represents patient stay on the rehabilitation unit - samples their
         (1) destination after rehab, and (2) length of stay (LOS) on the unit.
         """
+        # Add to occupancy count
+        self.rehab_occupancy += 1
+
         # Print the arrival time
         print(f"Patient {patient.patient_id} ({patient.patient_type}) " +
               f"arrive at rehab: {patient.rehab_arrival_time}.")
@@ -268,6 +302,28 @@ class Model:
               f"{patient.rehab_los}")
         yield self.env.timeout(patient.rehab_los)
 
+        # Remove from occupancy count
+        self.rehab_occupancy -= 1
+
+    def interval_audit(self, interval):
+        """
+        Audit occupancy at regular intervals.
+
+        Parameters
+        ----------
+        interval: float
+            Time between audits in days.
+        """
+        while True:
+            # Record current status of the simulation
+            self.audit_list.append({
+                'time': self.env.now,
+                'asu_occupancy': self.asu_occupancy,
+                'rehab_occupancy': self.rehab_occupancy
+            })
+            # Trigger next audit after desired interval has passed
+            yield self.env.timeout(interval)
+
     def run(self):
         """
         Run the simulation.
@@ -287,6 +343,10 @@ class Model:
                         unit=unit
                     )
                 )
+
+        # Schedule the interval auditor to run during the simulation
+        self.env.process(
+            self.interval_audit(interval=self.param.audit_interval))
 
         # Run the simulation
         self.env.run(until=run_length)
