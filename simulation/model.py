@@ -361,6 +361,18 @@ class Model:
             # Trigger next audit after desired interval has passed
             yield self.env.timeout(interval)
 
+    def warm_up(self):
+        """
+        If there is a warm-up period, then reset all results collection
+        variables once warm-up period has passed.
+        """
+        if self.param.warm_up_period > 0:
+            # Delay process until warm-up period has completed
+            yield self.env.timeout(self.param.warm_up_period)
+            # Reset results variables
+            self.patients = []
+            self.audit_list = []
+
     def run(self):
         """
         Run the simulation.
@@ -384,6 +396,9 @@ class Model:
         # Schedule the interval auditor to run during the simulation
         self.env.process(
             self.interval_audit(interval=self.param.audit_interval))
+
+        # Schedule process which will reset results when warm-up period ends
+        self.env.process(self.warm_up())
 
         # Run the simulation
         self.env.run(until=run_length)

@@ -417,8 +417,8 @@ class Param(RestrictAttributes):
         rehab_los=RehabLOS(),
         asu_routing=ASURouting(),
         rehab_routing=RehabRouting(),
-        warm_up_period=0,
-        data_collection_period=365*5,
+        warm_up_period=365*3,  # 3 years
+        data_collection_period=365*5,  # 5 years
         audit_interval=1,
         log_to_console=False,
         log_to_file=False
