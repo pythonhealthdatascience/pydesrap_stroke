@@ -129,6 +129,26 @@ class Model:
             rehab_param=self.param.rehab_los,
             distribution_type="lognormal")
 
+        # Add model initialisation details to the log
+        self.param.logger.log(sim_time=self.env.now, msg="Initialise model:\n")
+        self.param.logger.log(vars(self))
+        self.param.logger.log(msg="Parameters:\n ")
+        self.param.logger.log(vars(self.param))
+        self.param.logger.log(msg="Logger:\n ")
+        self.param.logger.log(vars(self.param.logger))
+        self.param.logger.log(msg="ASU arrivals:\n ")
+        self.param.logger.log(vars(self.param.asu_arrivals))
+        self.param.logger.log(msg="ASU LOS:\n ")
+        self.param.logger.log(vars(self.param.asu_los))
+        self.param.logger.log(msg="ASU routing:\n ")
+        self.param.logger.log(vars(self.param.asu_routing))
+        self.param.logger.log(msg="Rehab arrivals:\n ")
+        self.param.logger.log(vars(self.param.rehab_arrivals))
+        self.param.logger.log(msg="Rehab LOS:\n ")
+        self.param.logger.log(vars(self.param.rehab_los))
+        self.param.logger.log(msg="Rehab routing:\n ")
+        self.param.logger.log(vars(self.param.rehab_routing))
+
     def create_distributions(self, asu_param, rehab_param, distribution_type):
         """
         Create a nested dictionary with two items: "asu" and "rehab". Each
@@ -233,16 +253,22 @@ class Model:
         # Add to occupancy count
         self.asu_occupancy += 1
 
-        # Print the arrival time
-        print(f"Patient {patient.patient_id} ({patient.patient_type}) " +
-              f"arrive at ASU: {patient.asu_arrival_time}.")
+        # Log the arrival time
+        self.param.logger.log(
+            sim_time=patient.asu_arrival_time,
+            msg=(f"Patient {patient.patient_id} ({patient.patient_type}) " +
+                 "arrive at ASU."))
 
         # Sample destination after ASU (we do this immediately on arrival
         # in the ASU, as the destination influences the length of stay)
         patient.post_asu_destination = (
             self.routing_dist["asu"][patient.patient_type].sample())
-        print(f"Patient {patient.patient_id} post-ASU: " +
-              f"{patient.post_asu_destination}")
+
+        # Log the post-ASU destination
+        self.param.logger.log(
+            sim_time=self.env.now,
+            msg=(f"Patient {patient.patient_id} ({patient.patient_type}) " +
+                 f"post-ASU: {patient.post_asu_destination}"))
 
         # If it is a stroke patient,find out if they are going to the ESD
         # (stroke_esd) or not (stroke_noesd) - else, just same as patient_type
@@ -254,9 +280,12 @@ class Model:
         else:
             routing_type = patient.patient_type
 
-        # Sample LOS on the ASU and pass time
+        # Sample LOS on the ASU, log it and pass time
         patient.asu_los = self.los_dist["asu"][routing_type].sample()
-        print(f"Patient {patient.patient_id} LOS on ASU: {patient.asu_los}")
+        self.param.logger.log(
+            sim_time=self.env.now,
+            msg=(f"Patient {patient.patient_id} ({patient.patient_type}) " +
+                 f"LOS on ASU: {patient.asu_los:.3f}"))
         yield self.env.timeout(patient.asu_los)
 
         # If patient is going to rehab next, record arrival time and start that
@@ -276,15 +305,21 @@ class Model:
         # Add to occupancy count
         self.rehab_occupancy += 1
 
-        # Print the arrival time
-        print(f"Patient {patient.patient_id} ({patient.patient_type}) " +
-              f"arrive at rehab: {patient.rehab_arrival_time}.")
+        # Log the arrival time
+        self.param.logger.log(
+            sim_time=patient.rehab_arrival_time,
+            msg=(f"Patient {patient.patient_id} ({patient.patient_type}) " +
+                 "arrive at rehab."))
 
         # Sample destination after rehab
         patient.post_rehab_destination = (
             self.routing_dist["rehab"][patient.patient_type].sample())
-        print(f"Patient {patient.patient_id} post-rehab: " +
-              f"{patient.post_rehab_destination}")
+
+        # Log the post-rehab destination
+        self.param.logger.log(
+            sim_time=self.env.now,
+            msg=(f"Patient {patient.patient_id} ({patient.patient_type}) " +
+                 f"post-rehab: {patient.post_rehab_destination}"))
 
         # If it is a stroke patient,find out if they are going to the ESD
         # (stroke_esd) or not (stroke_noesd) - else, just same as patient_type
@@ -296,10 +331,12 @@ class Model:
         else:
             routing_type = patient.patient_type
 
-        # Sample LOS on the rehab unit and pass time
+        # Sample LOS on the rehab unit, log it and pass time
         patient.rehab_los = self.los_dist["rehab"][routing_type].sample()
-        print(f"Patient {patient.patient_id} LOS on rehab unit: " +
-              f"{patient.rehab_los}")
+        self.param.logger.log(
+            sim_time=self.env.now,
+            msg=(f"Patient {patient.patient_id} ({patient.patient_type}) " +
+                 f"LOS on rehab unit: {patient.rehab_los:.3f}"))
         yield self.env.timeout(patient.rehab_los)
 
         # Remove from occupancy count
@@ -317,9 +354,9 @@ class Model:
         while True:
             # Record current status of the simulation
             self.audit_list.append({
-                'time': self.env.now,
-                'asu_occupancy': self.asu_occupancy,
-                'rehab_occupancy': self.rehab_occupancy
+                "time": self.env.now,
+                "asu_occupancy": self.asu_occupancy,
+                "rehab_occupancy": self.rehab_occupancy
             })
             # Trigger next audit after desired interval has passed
             yield self.env.timeout(interval)

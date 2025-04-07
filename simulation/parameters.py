@@ -5,6 +5,8 @@ It includes arrival rates, length of stay distributions, and routing
 probabilities between different care settings.
 """
 
+from simulation.logging import SimLogger
+
 
 class RestrictAttributesMeta(type):
     """
@@ -417,7 +419,9 @@ class Param(RestrictAttributes):
         rehab_routing=RehabRouting(),
         warm_up_period=0,
         data_collection_period=20,
-        audit_interval=1
+        audit_interval=1,
+        log_to_console=False,
+        log_to_file=False
     ):
         """
         Initialise a parameter set for the simulation.
@@ -443,7 +447,12 @@ class Param(RestrictAttributes):
             Length of the data collection period.
         audit_interval: float
             Frequency of simulation audits in days.
+        log_to_console: boolean
+            Whether to print log messages to the console.
+        log_to_file: boolean
+            Whether to save log to a file.
         """
+        # Set parameters
         self.asu_arrivals = asu_arrivals
         self.rehab_arrivals = rehab_arrivals
         self.asu_los = asu_los
@@ -453,3 +462,7 @@ class Param(RestrictAttributes):
         self.warm_up_period = warm_up_period
         self.data_collection_period = data_collection_period
         self.audit_interval = audit_interval
+
+        # Set up logger
+        self.logger = SimLogger(log_to_console=log_to_console,
+                                log_to_file=log_to_file)
