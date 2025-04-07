@@ -786,3 +786,17 @@ The template has lots going on in this regard, with fixing for utilisation and s
 ## Probability of delay plot
 
 Add code to generate Figure 3, and included explanation of how we can determine probability of delay based on the frequencies and cumulative frequencies.
+
+## Multiple replications & results output by the model
+
+When running scenarios in the paper, the model was run with 150 replications. Used the python template to add a `Runner` class to execute this.
+
+This took 26 seconds, so implemented with option for parallel execution.
+
+I need to output the occupancy frequencies / probability of delay for each replication, so moved this code into the package.
+
+## Linting and testing
+
+Had been a while since linted, so did that.
+
+This raised some errors in tests, which I hadn't run in ages, and these were no longer working properly.
