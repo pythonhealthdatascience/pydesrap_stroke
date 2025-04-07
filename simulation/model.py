@@ -22,7 +22,13 @@ class Patient:
     post_asu_destination: str
         Destination after the ASU ("rehab", "esd", "other").
     asu_los: float
-        Length of stay on the acute stroke unit (ASU) in days.
+        Length of stay on the ASU in days.
+    rehab_arrival_time: float
+        Arrival time at the rehabilitation unit in days.
+    post_rehab_destination: str
+        Destination after rehab ("esd", "other").
+    rehab_los: float
+        Length of stay on the rehabilitation unit in days.
     """
     def __init__(self, patient_id, patient_type):
         """
@@ -38,6 +44,9 @@ class Patient:
         self.asu_arrival_time = np.nan
         self.post_asu_destination = np.nan
         self.asu_los = np.nan
+        self.rehab_arrival_time = np.nan
+        self.post_rehab_destination = np.nan
+        self.rehab_los = np.nan
 
 
 class Model:
@@ -177,17 +186,14 @@ class Model:
                               patient_type=patient_type)
             self.patients.append(patient)
 
-            # Record and print arrival time
-            patient.asu_arrival_time = self.env.now
-            print(f"Patient {patient.patient_id} ({patient.patient_type}) " +
-                  f"arrive at {unit}: {patient.asu_arrival_time}.")
-
-            # Start process for acute stroke unit or rehab unit
+            # Record the arrival time, and then start the process for
+            # the acute stroke unit or rehab unit
             if unit == "asu":
+                patient.asu_arrival_time = self.env.now
                 self.env.process(self.acute_stroke_unit(patient))
             elif unit == "rehab":
-                print("rehab")
-                # self.env.process(self.rehab_unit(patient))
+                patient.rehab_arrival_time = self.env.now
+                self.env.process(self.rehab_unit(patient))
 
     def acute_stroke_unit(self, patient):
         """
@@ -199,6 +205,10 @@ class Model:
         patient: Patient
             Patient.
         """
+        # Print the arrival time
+        print(f"Patient {patient.patient_id} ({patient.patient_type}) " +
+              f"arrive at ASU: {patient.asu_arrival_time}.")
+
         # Sample destination after ASU (we do this immediately on arrival
         # in the ASU, as the destination influences the length of stay)
         patient.post_asu_destination = (
@@ -218,13 +228,45 @@ class Model:
 
         # Sample LOS on the ASU and pass time
         patient.asu_los = self.los_dist["asu"][routing_type].sample()
+        print(f"Patient {patient.patient_id} LOS on ASU: {patient.asu_los}")
         yield self.env.timeout(patient.asu_los)
 
-    def rehab_unit(self, p):
+        # If patient is going to rehab next, record arrival time and start that
+        # process
+        if patient.post_asu_destination == "rehab":
+            patient.rehab_arrival_time = self.env.now
+            self.env.process(self.rehab_unit(patient))
+
+    def rehab_unit(self, patient):
         """
-        TBC
+        Represents patient stay on the rehabilitation unit - samples their
+        (1) destination after rehab, and (2) length of stay (LOS) on the unit.
         """
-        #
+        # Print the arrival time
+        print(f"Patient {patient.patient_id} ({patient.patient_type}) " +
+              f"arrive at rehab: {patient.rehab_arrival_time}.")
+
+        # Sample destination after rehab
+        patient.post_rehab_destination = (
+            self.routing_dist["rehab"][patient.patient_type].sample())
+        print(f"Patient {patient.patient_id} post-rehab: " +
+              f"{patient.post_rehab_destination}")
+
+        # If it is a stroke patient,find out if they are going to the ESD
+        # (stroke_esd) or not (stroke_noesd) - else, just same as patient_type
+        if patient.patient_type == "stroke":
+            if patient.post_rehab_destination == "esd":
+                routing_type = "stroke_esd"
+            else:
+                routing_type = "stroke_noesd"
+        else:
+            routing_type = patient.patient_type
+
+        # Sample LOS on the rehab unit and pass time
+        patient.rehab_los = self.los_dist["rehab"][routing_type].sample()
+        print(f"Patient {patient.patient_id} LOS on rehab unit: " +
+              f"{patient.rehab_los}")
+        yield self.env.timeout(patient.rehab_los)
 
     def run(self):
         """
