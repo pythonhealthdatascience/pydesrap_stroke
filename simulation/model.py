@@ -129,26 +129,6 @@ class Model:
             rehab_param=self.param.rehab_los,
             distribution_type="lognormal")
 
-        # Add model initialisation details to the log
-        self.param.logger.log(sim_time=self.env.now, msg="Initialise model:\n")
-        self.param.logger.log(vars(self))
-        self.param.logger.log(msg="Parameters:\n ")
-        self.param.logger.log(vars(self.param))
-        self.param.logger.log(msg="Logger:\n ")
-        self.param.logger.log(vars(self.param.logger))
-        self.param.logger.log(msg="ASU arrivals:\n ")
-        self.param.logger.log(vars(self.param.asu_arrivals))
-        self.param.logger.log(msg="ASU LOS:\n ")
-        self.param.logger.log(vars(self.param.asu_los))
-        self.param.logger.log(msg="ASU routing:\n ")
-        self.param.logger.log(vars(self.param.asu_routing))
-        self.param.logger.log(msg="Rehab arrivals:\n ")
-        self.param.logger.log(vars(self.param.rehab_arrivals))
-        self.param.logger.log(msg="Rehab LOS:\n ")
-        self.param.logger.log(vars(self.param.rehab_los))
-        self.param.logger.log(msg="Rehab routing:\n ")
-        self.param.logger.log(vars(self.param.rehab_routing))
-
     def create_distributions(self, asu_param, rehab_param, distribution_type):
         """
         Create a nested dictionary with two items: "asu" and "rehab". Each
@@ -377,6 +357,26 @@ class Model:
         """
         Run the simulation.
         """
+        # Add model initialisation details to the log
+        self.param.logger.log(sim_time=self.env.now, msg="Initialise model:\n")
+        self.param.logger.log(vars(self))
+        self.param.logger.log(msg="Parameters:\n ")
+        self.param.logger.log(vars(self.param))
+        self.param.logger.log(msg="Logger:\n ")
+        self.param.logger.log(vars(self.param.logger))
+        self.param.logger.log(msg="ASU arrivals:\n ")
+        self.param.logger.log(vars(self.param.asu_arrivals))
+        self.param.logger.log(msg="ASU LOS:\n ")
+        self.param.logger.log(vars(self.param.asu_los))
+        self.param.logger.log(msg="ASU routing:\n ")
+        self.param.logger.log(vars(self.param.asu_routing))
+        self.param.logger.log(msg="Rehab arrivals:\n ")
+        self.param.logger.log(vars(self.param.rehab_arrivals))
+        self.param.logger.log(msg="Rehab LOS:\n ")
+        self.param.logger.log(vars(self.param.rehab_los))
+        self.param.logger.log(msg="Rehab routing:\n ")
+        self.param.logger.log(vars(self.param.rehab_routing))
+
         # Calculate the total run length
         run_length = (self.param.warm_up_period +
                       self.param.data_collection_period)
