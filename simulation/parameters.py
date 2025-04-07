@@ -418,7 +418,7 @@ class Param(RestrictAttributes):
         asu_routing=ASURouting(),
         rehab_routing=RehabRouting(),
         warm_up_period=0,
-        data_collection_period=20,
+        data_collection_period=365*5,
         audit_interval=1,
         log_to_console=False,
         log_to_file=False
