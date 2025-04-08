@@ -28,14 +28,69 @@ TBC
 
 ## How to run
 
-TBC
+The simulation code is provided as a **package** within `simulation/`. There are notebooks executing the model and analysing the results in `notebooks/`.
 
-<!-- Provide step-by-step instructions and examples.
+To run the model with base parameters once or with replications:
 
-Clearly indicate which files will create each figure in the paper. Hypothetical example:
+```
+from simulation.parameters import Param
+from simulation.runner import Runner
 
-* To generate **Figures 1 and 2**, execute `notebooks/base_case.ipynb`
-* To generate **Table 1** and **Figures 3 to 5**, execute `notebooks/scenario_analysis.ipynb` -->
+param = Param()
+runner = Runner(param=param)
+
+single_result = runner.run_single(run=0)
+rep_results = runner.run_reps()
+```
+
+Example altering the model parameters:
+
+```
+from simulation.parameters import Param, ASUArrivals, RehabRouting
+from simulation.runner import Runner
+
+# Modified on of the arrival rates, some routing probabilities, and the
+# number of replications
+param = Param(
+    asu_arrivals=ASUArrivals(tia=10),
+    rehab_routing=RehabRouting(neuro_esd=0.2, neuro_other=0.8),
+    number_of_runs=10
+)
+runner = Runner(param=param)
+rep_results = runner.run_reps()
+```
+
+### Generating the figures from the article
+
+The original study used Simul8. Each of the outputs from that article have been reproduced in this repository using Python, with some examples below. To generate these, simply execute `notebooks/analysis.ipynb`.
+
+Examples:
+
+**Figure 1**
+
+<div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+  <div style="text-align: center; width: 48%;">
+    Original:<br>
+    <img src="docs/article/fig1.png" width="100%">
+  </div>
+  <div style="text-align: center; width: 48%;">
+    From this repository:<br>
+    <img src="outputs/occupancy_freq_asu.png" width="100%">
+  </div>
+</div>
+
+**Figure 3**
+
+<div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+  <div style="text-align: center; width: 45%;">
+    Original:<br>
+    <img src="docs/article/fig3.png" width="100%">
+  </div>
+  <div style="text-align: center; width: 52%;">
+    From this repository:<br>
+    <img src="outputs/delay_prob_asu.png" width="100%">
+  </div>
+</div>
 
 <br>
 
