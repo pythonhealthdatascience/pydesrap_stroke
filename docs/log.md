@@ -795,8 +795,14 @@ This took 26 seconds, so implemented with option for parallel execution.
 
 I need to output the occupancy frequencies / probability of delay for each replication, so moved this code into the package.
 
-## Linting and testing
+## Linting, testing and parameter validation
 
 Had been a while since linted, so did that.
 
 This raised some errors in tests, which I hadn't run in ages, and these were no longer working properly.
+
+I then add new tests based on the python template and on the tests ran in https://github.com/pythonhealthdatascience/llm_simpy/. This included unit tests, functional tests and back tests.
+
+I add methods to check parameter validity in `Param`. This flagged that rehab other routing probability don't sum to 100% (88% and 13%) - but this is as described in the paper, and presumed to be due to rounding, so altered the validation test to allow.
+
+> 💡 When explain tests, could do all in one section, like Tests > Back tests, Tests > Functional tests, Tests > Unit tests - and then on each of those pages, it's like, if you have parameter validation... if you have warm-up... etc. etc. suggesting tests could include.
