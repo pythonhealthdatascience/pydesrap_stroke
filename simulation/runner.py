@@ -59,6 +59,24 @@ class Runner:
         df = pd.DataFrame(
             complete_frequency.items(), columns=["beds", "freq"])
 
+        # Calculate percentage, cumulative percentage and probability of delay
+        df = self.calculate_occupancy_stats(df)
+
+        return df
+
+    def calculate_occupancy_stats(self, df):
+        """
+        Given the frequencies of each occupancy level, calculates:
+        1. Percentage
+        2. Cumulative percentage
+        3. Probability of delay
+
+        Parameters
+        ----------
+        df: pd.Dataframe
+            Dataframe containing the frequency of each occupancy level
+            (e.g. as output by get_occupancy_freq()).
+        """
         # Add column with frequencies converted to proportions
         df["pct"] = df["freq"] / df["freq"].sum()
 
@@ -122,4 +140,27 @@ class Runner:
                 delayed(self.run_single)(run)
                 for run in range(self.param.number_of_runs))
 
-        return results
+        # Extract dataframes and add run column
+        rep_dataframes = {"asu": [], "rehab": []}
+        for i, entry in enumerate(results):
+            for key in ["asu", "rehab"]:
+                df_copy = entry[key].copy()
+                df_copy["run"] = i
+                rep_dataframes[key].append(df_copy)
+
+        # Concatenate the ASU and rehab dataframes into a single dataframe each
+        result = {key: pd.concat(dfs) for key, dfs in rep_dataframes.items()}
+
+        # Create a summary dataframe for each unit with the overall frequency
+        # and occupancy for each bed
+        overall = {}
+        for unit in ["asu", "rehab"]:
+            # Sum the count the frequencies of beds across replications
+            comb = (result[unit]
+                    .groupby("beds", as_index=False)["freq"]
+                    .sum())
+            # Calculate percentage, cumulative percentage and probability of
+            # delay, and save to dictionary
+            overall[unit] = self.calculate_occupancy_stats(comb)
+
+        return result, overall
