@@ -6,6 +6,11 @@ components (e.g. methods, classes) and tests them in isolation to ensure they
 work as intended.
 """
 
+from io import StringIO
+import logging
+import os
+from unittest.mock import patch, MagicMock
+
 import numpy as np
 import pytest
 from sim_tools.distributions import Exponential, Lognormal, Discrete
@@ -15,6 +20,7 @@ from simulation.parameters import (
     ASURouting, RehabRouting, Param)
 from simulation.model import Model
 from simulation.runner import Runner
+from simulation.logging import SimLogger
 
 
 # -----------------------------------------------------------------------------
@@ -243,3 +249,62 @@ def test_get_occupancy_freq():
 
     # Check prob_delay calculation
     assert np.allclose(result_df["prob_delay"], expected_prob_delay)
+
+
+# -----------------------------------------------------------------------------
+# SimLogger
+# -----------------------------------------------------------------------------
+
+def test_log_to_console():
+    """
+    Confirm that logger.log() prints the provided message to the console.
+
+    Notes
+    -----
+    Test from github.com/pythonhealthdatascience/rap_template_python_des.
+    """
+    with patch('sys.stdout', new_callable=StringIO) as mock_stdout:
+        logger = SimLogger(log_to_console=True)
+        logger.log(sim_time=None, msg="Test console log")
+        # Check if console output matches
+        assert "Test console log" in mock_stdout.getvalue()
+
+
+def test_log_to_file():
+    """
+    Confirm that logger.log() would output the message to a .log file at the
+    provided file path.
+
+    Notes
+    -----
+    Test from github.com/pythonhealthdatascience/rap_template_python_des.
+    """
+    # Mock the file open operation
+    with patch('builtins.open', new_callable=MagicMock) as mock_open:
+        # Create the logger and log a simple example
+        logger = SimLogger(log_to_file=True, file_path="test.log")
+        logger.log(sim_time=None, msg="Log message")
+
+        # Check that the file was opened in write mode at the absolute path
+        mock_open.assert_called_with(
+            os.path.abspath("test.log"), "w", encoding="locale", errors=None)
+
+        # Verify a FileHandler is attached to the logger
+        assert (any(isinstance(handler, logging.FileHandler)
+                    for handler in logger.logger.handlers))
+
+
+def test_invalid_path():
+    """
+    Ensure there is appropriate error handling for an invalid file path.
+    """
+    with pytest.raises(ValueError):
+        SimLogger(log_to_file=True, file_path="/invalid/path/to/log.log")
+
+
+def test_invalid_file_extension():
+    """
+    Ensure there is appropriate error handling for an invalid file extension.
+    """
+    with pytest.raises(ValueError):
+        SimLogger(log_to_file=True, file_path="test.txt")
