@@ -90,6 +90,9 @@ class Model:
         run_number: int
             Replication / run number.
         """
+        # Check parameter validity
+        param.check_param_validity()
+
         # Set parameters
         self.param = param
         self.run_number = run_number

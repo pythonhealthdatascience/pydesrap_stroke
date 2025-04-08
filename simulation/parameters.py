@@ -477,3 +477,147 @@ class Param(RestrictAttributes):
         # Set up logger
         self.logger = SimLogger(log_to_console=log_to_console,
                                 log_to_file=log_to_file)
+
+    def check_param_validity(self):
+        """
+        Check the validity of the provided parameters.
+
+        Validates all simulation parameters to ensure they meet requirements:
+        - Warm-up period and data collection period must be >= 0
+        - Number of runs and audit interval must be > 0
+        - Arrival rates must be >= 0
+        - Length of stay parameters must be >= 0
+        - Routing probabilities must sum to 1 and be between 0 and 1
+
+        Raises
+        ------
+        ValueError
+            If any parameter fails validation with a descriptive error message.
+        """
+        # Validate parameters that must be >= 0
+        for param in ["warm_up_period", "data_collection_period"]:
+            self.validate_param(
+                param, lambda x: x >= 0,
+                "must be greater than or equal to 0")
+
+        # Validate parameters that must be > 0
+        for param in ["number_of_runs", "audit_interval"]:
+            self.validate_param(
+                param, lambda x: x > 0,
+                "must be greater than 0")
+
+        # Validate arrival parameters
+        for param in ["asu_arrivals", "rehab_arrivals"]:
+            self.validate_nested_param(
+                param, lambda x: x >= 0,
+                "must be greater than 0")
+
+        # Validate length of stay parameters
+        for param in ["asu_los", "rehab_los"]:
+            self.validate_nested_param(
+                param, lambda x: x >= 0,
+                "must be greater than 0", nested=True)
+
+        # Validate routing parameters
+        for param in ["asu_routing", "rehab_routing"]:
+            self.validate_routing(param)
+
+    def validate_param(self, param_name, condition, error_msg):
+        """
+        Validate a single parameter against a condition.
+
+        Parameters
+        ----------
+        param_name: str
+            Name of the parameter being validated.
+        condition: callable
+            A function that returns True if the value is valid.
+        error_msg: str
+            Error message to display if validation fails.
+
+        Raises
+        ------
+        ValueError:
+            If the parameter fails the validation condition.
+        """
+        value = getattr(self, param_name)
+        if not condition(value):
+            raise ValueError(
+                f"Parameter '{param_name}' {error_msg}, but is: {value}")
+
+    def validate_nested_param(
+        self, obj_name, condition, error_msg, nested=False
+    ):
+        """
+        Validate parameters within a nested object structure.
+
+        Parameters
+        ----------
+        obj_name: str
+            Name of the object containing parameters.
+        condition: callable
+            A function that returns True if the value is valid.
+        error_msg: str
+            Error message to display if validation fails.
+        nested: bool, optional
+            If True, validates parameters in a doubly-nested structure. If
+            False, validates parameters in a singly-nested structure.
+
+        Raises
+        ------
+        ValueError:
+            If any nested parameter fails the validation condition.
+        """
+        obj = getattr(self, obj_name)
+        for key, value in vars(obj).items():
+            if key == "_initialised":
+                continue
+            if nested:
+                for sub_key, sub_value in value.items():
+                    if not condition(sub_value):
+                        raise ValueError(
+                            f"Parameter '{sub_key}' for '{key}' in " +
+                            f"'{obj_name}' {error_msg}, but is: {sub_value}")
+            else:
+                if not condition(value):
+                    raise ValueError(
+                        f"Parameter '{key}' from '{obj_name}' {error_msg}, " +
+                        f"but is: {value}")
+
+    def validate_routing(self, obj_name):
+        """
+        Validate routing probability parameters.
+
+        Performs two validations:
+        1. Checks that all probabilities for each routing option sum to 1.
+        2. Checks that individual probabilities are between 0 and 1 inclusive.
+
+        Parameters
+        ----------
+        obj_name: str
+            Name of the routing object.
+
+        Raises
+        ------
+        ValueError:
+            If the probabilities don't sum to 1, or if any probability is
+            outside [0,1].
+        """
+        obj = getattr(self, obj_name)
+        for key, value in vars(obj).items():
+            if key == "_initialised":
+                continue
+
+            # Check that probabilities sum to 1
+            total_prob = sum(value.values())
+            if total_prob != 1:
+                raise ValueError(
+                    f"Routing probabilities for '{key}' in '{obj_name}' " +
+                    f"should sum to 1 but sum to: {total_prob}")
+
+            # Check that probabilities are between 0 and 1
+            for sub_key, sub_value in value.items():
+                if sub_value < 0 or sub_value > 1:
+                    raise ValueError(
+                        f"Parameter '{sub_key}' for '{key}' in '{obj_name}'" +
+                        f"must be between 0 and 1, but is: {sub_value}")
