@@ -6,10 +6,9 @@ components (e.g. methods, classes) and tests them in isolation to ensure they
 work as intended.
 """
 
-from collections import namedtuple
 import numpy as np
 import pytest
-from sim_tools.distributions import Exponential
+from sim_tools.distributions import Exponential, Lognormal, Discrete
 
 from simulation.parameters import (
     ASUArrivals, RehabArrivals, ASULOS, RehabLOS,
@@ -42,42 +41,110 @@ def test_new_attribute(class_to_test):
         setattr(instance, "new_entry", 3)
 
 
+def test_param_valid():
+    """
+    Check that all default model parameters are valid.
+    """
+    try:
+        Param().check_param_validity()
+    except Exception as exc:
+        pytest.fail(
+            f"check_param_validity() raised an unexpected exception: {exc}")
+
+
+@pytest.mark.parametrize("param, value, msg", [
+    ("warm_up_period", -1,
+     "Parameter 'warm_up_period' must be greater than or equal to 0"),
+    ("data_collection_period", -5,
+     "Parameter 'data_collection_period' must be greater than or equal to 0"),
+    ("number_of_runs", 0,
+     "Parameter 'number_of_runs' must be greater than 0"),
+    ("audit_interval", -2,
+     "Parameter 'audit_interval' must be greater than 0")])
+def test_param_errors(param, value, msg):
+    """
+    Check that `check_param_validity()` catches parameter issues.
+    """
+    model_param = Param()
+    setattr(model_param, param, value)
+    with pytest.raises(ValueError, match=msg):
+        model_param.check_param_validity()
+
+
+def test_arrival_params():
+    """
+    Test validation of arrival parameters.
+    """
+    model_param = Param(asu_arrivals=ASUArrivals(stroke=-5))
+    with pytest.raises(
+        ValueError,
+        match="Parameter 'stroke' from 'asu_arrivals' must be greater than 0"
+    ):
+        model_param.check_param_validity()
+
+
+def test_los_params():
+    """
+    Test validation of length of stay parameters.
+    """
+    model_param = Param(asu_los=ASULOS(neuro_mean=-2, neuro_sd=1))
+    with pytest.raises(
+        ValueError,
+        match=("Parameter 'mean' for 'neuro' in 'asu_los' must be greater " +
+               "than 0")
+    ):
+        model_param.check_param_validity()
+
+
+def test_routing_sum():
+    """
+    Test validation of routing probabilities sum.
+    """
+    model_param = Param(asu_routing=ASURouting(
+        tia_rehab=0.6, tia_esd=0.2, tia_other=0.1))
+    with pytest.raises(
+        ValueError,
+        match=("Routing probabilities for 'tia' in 'asu_routing' should sum " +
+               "to apx. 1")
+    ):
+        model_param.check_param_validity()
+
+
+def test_routing_range():
+    """
+    Test validation of routing probability ranges.
+    """
+    model_param = Param(asu_routing=ASURouting(
+        neuro_rehab=1.1, neuro_esd=0.1, neuro_other=-0.2))
+    with pytest.raises(ValueError, match="must be between 0 and 1"):
+        model_param.check_param_validity()
+
+
 # -----------------------------------------------------------------------------
 # Model
 # -----------------------------------------------------------------------------
 
 def test_create_distributions():
     """
-    Test that distributions are created correctly for all units and patient
-    types specified.
+    Check that distributions are all the correct type.
     """
-    param = Param(
-        asu_arrivals=namedtuple(
-            "ASUArrivals", ["stroke", "tia", "neuro", "other"])(
-            stroke=5, tia=7, neuro=10, other=15),
-        rehab_arrivals=namedtuple(
-            "RehabArrivals", ["stroke", "tia", "other"])(
-            stroke=8, tia=12, other=20))
+    param = Param()
     model = Model(param, run_number=42)
-
-    # Check ASU arrival distributions
-    assert len(model.arrival_dist["asu"]) == 4
-    assert "stroke" in model.arrival_dist["asu"]
-    assert "tia" in model.arrival_dist["asu"]
-    assert "neuro" in model.arrival_dist["asu"]
-    assert "other" in model.arrival_dist["asu"]
-
-    # Check Rehab arrival distributions
-    assert len(model.arrival_dist["rehab"]) == 3
-    assert "stroke" in model.arrival_dist["rehab"]
-    assert "tia" in model.arrival_dist["rehab"]
-    assert "other" in model.arrival_dist["rehab"]
-    assert "neuro" not in model.arrival_dist["rehab"]
 
     # Check that all arrival distributions are Exponential
     for _, unit_dict in model.arrival_dist.items():
         for patient_type in unit_dict:
             assert isinstance(unit_dict[patient_type], Exponential)
+
+    # Check that all length of stay distributions are Lognormal
+    for _, unit_dict in model.los_dist.items():
+        for patient_type in unit_dict:
+            assert isinstance(unit_dict[patient_type], Lognormal)
+
+    # Check that all routing distributions are Discrete
+    for _, unit_dict in model.routing_dist.items():
+        for patient_type in unit_dict:
+            assert isinstance(unit_dict[patient_type], Discrete)
 
 
 def test_sampling_seed_reproducibility():
