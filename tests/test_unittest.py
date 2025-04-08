@@ -1,5 +1,9 @@
 """
 Unit tests
+
+Unit tests are a type of functional testing that focuses on individual
+components (e.g. methods, classes) and tests them in isolation to ensure they
+work as intended.
 """
 
 from collections import namedtuple
@@ -11,6 +15,7 @@ from simulation.parameters import (
     ASUArrivals, RehabArrivals, ASULOS, RehabLOS,
     ASURouting, RehabRouting, Param)
 from simulation.model import Model
+from simulation.runner import Runner
 
 
 # -----------------------------------------------------------------------------
@@ -124,3 +129,50 @@ def test_run_time():
     model.run()
     assert model.env.now == 21
     assert len(model.patients) > 0
+
+
+# -----------------------------------------------------------------------------
+# Runner
+# -----------------------------------------------------------------------------
+
+def test_get_occupancy_freq():
+    """
+    Test the `get_occupancy_freq` method works as expected.
+
+    Notes
+    -----
+    Inspired by `test_result_processing_1` and `test_result_processing_2` in
+    github.com/pythonhealthdatascience/llm_simpy/.
+    """
+    # Create test data
+    audit_list = []
+    for count, value in [(4, 1), (3, 2), (2, 3), (1, 4)]:
+        for _ in range(count):
+            audit_list.append({"asu_occupancy": value,
+                               "rehab_occupancy": value + 1})
+
+    # Define expected values for our test data
+    expected_beds = [1, 2, 3, 4]
+    expected_freq = [4, 3, 2, 1]
+    expected_pct = [0.4, 0.3, 0.2, 0.1]
+    expected_c_pct = [0.4, 0.7, 0.9, 1.0]
+    expected_prob_delay = [1.0, 0.3/0.7, 0.2/0.9, 0.1/1.0]
+
+    # Create a Runner instance
+    runner = Runner(None)
+
+    # Call the method
+    result_df = runner.get_occupancy_freq(audit_list, "asu")
+
+    # Check the structure of the DataFrame
+    assert list(result_df.columns) == [
+        "beds", "freq", "pct", "c_pct", "prob_delay"]
+
+    # Check the values
+    assert list(result_df["beds"]) == expected_beds
+    assert list(result_df["freq"]) == expected_freq
+    assert np.allclose(result_df["pct"], expected_pct)
+    assert np.allclose(result_df["c_pct"], expected_c_pct)
+
+    # Check prob_delay calculation
+    assert np.allclose(result_df["prob_delay"], expected_prob_delay)
