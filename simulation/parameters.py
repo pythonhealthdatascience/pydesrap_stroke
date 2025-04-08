@@ -609,11 +609,13 @@ class Param(RestrictAttributes):
                 continue
 
             # Check that probabilities sum to 1
+            # Note: In the article, rehab other is 88% and 13%, so have
+            # allowed deviation of 1%
             total_prob = sum(value.values())
-            if total_prob != 1:
+            if total_prob < 0.99 or total_prob > 1.01:
                 raise ValueError(
                     f"Routing probabilities for '{key}' in '{obj_name}' " +
-                    f"should sum to 1 but sum to: {total_prob}")
+                    f"should sum to apx. 1 but sum to: {total_prob}")
 
             # Check that probabilities are between 0 and 1
             for sub_key, sub_value in value.items():
