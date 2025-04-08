@@ -64,33 +64,27 @@ rep_results = runner.run_reps()
 
 The original study used Simul8. Each of the outputs from that article have been reproduced in this repository using Python, with some examples below. To generate these, simply execute `notebooks/analysis.ipynb`.
 
-Examples:
+#### Examples
 
 **Figure 1**
 
-<div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
-  <div style="text-align: center; width: 48%;">
-    Original:<br>
-    <img src="docs/article/fig1.png" width="100%">
-  </div>
-  <div style="text-align: center; width: 48%;">
-    From this repository:<br>
-    <img src="outputs/occupancy_freq_asu.png" width="100%">
-  </div>
-</div>
+Original:
+
+![](docs/article/fig1.png)
+
+From this repository:
+
+![](outputs/occupancy_freq_asu.png)
 
 **Figure 3**
 
-<div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
-  <div style="text-align: center; width: 45%;">
-    Original:<br>
-    <img src="docs/article/fig3.png" width="100%">
-  </div>
-  <div style="text-align: center; width: 52%;">
-    From this repository:<br>
-    <img src="outputs/delay_prob_asu.png" width="100%">
-  </div>
-</div>
+Original:
+
+![](docs/article/fig3.png)
+
+From this repository:
+
+![](outputs/delay_prob_asu.png)
 
 <br>
 
