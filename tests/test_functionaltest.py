@@ -120,8 +120,6 @@ def test_long_los(stroke_no_esd_mean):
         assert len(model.patients) > total_occupancy
 
 
-# TODO: test_ev_5/6/7/8 - requires patient counts by unit and patient type
-
 def test_warmup_only():
     """
     Check that results are as expected if model is run with no data collection

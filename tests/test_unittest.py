@@ -53,6 +53,7 @@ def test_param_valid():
     """
     try:
         Param().check_param_validity()
+    # pylint: disable=broad-exception-caught
     except Exception as exc:
         pytest.fail(
             f"check_param_validity() raised an unexpected exception: {exc}")
