@@ -344,6 +344,14 @@ class Model:
             # Trigger next audit after desired interval has passed
             yield self.env.timeout(interval)
 
+    def reset_results(self):
+        """
+        Resets results collection variables to their initial values. Used by
+        warm_up(), and for correction to results in run().
+        """
+        self.patients = []
+        self.audit_list = []
+
     def warm_up(self):
         """
         If there is a warm-up period, then reset all results collection
@@ -353,8 +361,15 @@ class Model:
             # Delay process until warm-up period has completed
             yield self.env.timeout(self.param.warm_up_period)
             # Reset results variables
-            self.patients = []
-            self.audit_list = []
+            self.reset_results()
+            # Log that warm-up period has ended
+            if self.param.warm_up_period > 0:
+                self.param.logger.log(sim_time=self.env.now,
+                                      msg='─' * 10)
+                self.param.logger.log(sim_time=self.env.now,
+                                      msg='Warm up complete.')
+                self.param.logger.log(sim_time=self.env.now,
+                                      msg='─' * 10)
 
     def run(self):
         """
@@ -405,3 +420,9 @@ class Model:
 
         # Run the simulation
         self.env.run(until=run_length)
+
+        # Error handling - if there was no data collection period, the
+        # simulation ends before it has a chance to reset the results,
+        # so we do so manually
+        if self.param.data_collection_period == 0:
+            self.reset_results()
