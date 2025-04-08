@@ -614,7 +614,7 @@ class Model:
         self.env.run(until=run_length)
 ```
 
-## Tests
+## Tests and run time
 
 We could add some basic tests now, e.g.
 
@@ -627,6 +627,8 @@ Although as not actually doing warm-up logic yet, going down that path a bit pre
 > 💡 Start with basic run time, then change to warm up + data collection
 
 > 💡 Maybe don't need to be mentioning tests at this stage yet.
+
+Hence, removed some of the tests and switched to just run time.
 
 ```
 class MockParam:
@@ -728,3 +730,79 @@ def test_run_time():
     assert model.env.now == 21
     assert len(model.patients) > 0
 ```
+
+## Patient destination & model logic
+
+In the model length of stay is determined not just by patient type, but also patient destination post ASU. For example Early Supported Discharge greatly reduces length of stay. As such the model is designed to sample destination as the patient arrives.
+
+Restructured `ASURouting` and `RehabRouting` (and also the LOS classes) to be dictionaries for each patient, a more useable format, as we'll be searching for parameters by patient type.
+
+Created sampling distributions for routing and length of stay, and sampled the post-ASU destination.
+
+At this point, built rest of model logic basically.
+
+* Removed the redundant distribution from Model.patient_generator() and add the patient routing type (dependent on post-ASU destination for stroke - stroke_esd or stroke_noesd).
+* Set up the ASU and rehab processes.
+
+## Daily audit of occupancy
+
+Figure 1 is the results from a daily audit of occupancy of the ASU (i.e. number of patients on the unit).
+
+I add a variable recording occupancy, which is increased and decreased as patients come and go.
+
+I then set up an auditor which checks and records the value of occupancy once per day.
+
+## Logging
+
+Soon, will want to run the model for longer time periods, and so want to be able to disable the printed messages if desired.
+
+Hence, at this stage, I switched to using the logging module rather than simple print statements.
+
+> 💡 Remember trace as simpler alternative if full logs are not desired.
+
+I copied over the code from `rap_template_python_des` `logging.py`.
+
+I then imported this class to `Param`, with `logger` now a parameter, tweaking it so you're just setting `log_to_console` and `log_to_file` rather than needing to provide the `SimLogger` class.
+
+Within `Model`, I add information about model information to the log within `__init__`, and then replaced the `print()` statements elsewhere with `log()`.
+
+## Occupancy plot
+
+Now able to disable logging, I increased the run length and add code to generate the occupancy plot in `analysis.ipynb`.
+
+This is similar but won't be quite right as have not yet add the warm-up period...
+
+## Warm-up
+
+Followed the template to add the warm-up period. Didn't include anything on choosing warm-up as that is already chosen in the paper. Steps to add warm-up were:
+
+* Changing default warm-up parameter in `Param`.
+* Run time is warm-up + data collection (already done).
+* Add a warm-up method to `Model` which resets the results variables.
+* Schedule this method in `run()`.
+
+The template has lots going on in this regard, with fixing for utilisation and so on. Just went simple, with it all done in `warm_up()` method, and just setting `patients` and `audit_list` to [].
+
+## Probability of delay plot
+
+Add code to generate Figure 3, and included explanation of how we can determine probability of delay based on the frequencies and cumulative frequencies.
+
+## Multiple replications & results output by the model
+
+When running scenarios in the paper, the model was run with 150 replications. Used the python template to add a `Runner` class to execute this.
+
+This took 26 seconds, so implemented with option for parallel execution.
+
+I need to output the occupancy frequencies / probability of delay for each replication, so moved this code into the package.
+
+## Linting, testing and parameter validation
+
+Had been a while since linted, so did that.
+
+This raised some errors in tests, which I hadn't run in ages, and these were no longer working properly.
+
+I then add new tests based on the python template and on the tests ran in https://github.com/pythonhealthdatascience/llm_simpy/. This included unit tests, functional tests and back tests.
+
+I add methods to check parameter validity in `Param`. This flagged that rehab other routing probability don't sum to 100% (88% and 13%) - but this is as described in the paper, and presumed to be due to rounding, so altered the validation test to allow.
+
+> 💡 When explain tests, could do all in one section, like Tests > Back tests, Tests > Functional tests, Tests > Unit tests - and then on each of those pages, it's like, if you have parameter validation... if you have warm-up... etc. etc. suggesting tests could include.
