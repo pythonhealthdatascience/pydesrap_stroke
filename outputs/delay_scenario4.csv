@@ -1,0 +1,12 @@
+unit,beds,prob_delay_current,1_in_n_delay_current,prob_delay_no_complex_neuro,1_in_n_delay_no_complex_neuro
+asu,10,0.14,7,0.09,11
+asu,11,0.09,11,0.06,18
+asu,12,0.06,16,0.03,31
+asu,13,0.04,26,0.02,55
+asu,14,0.02,45,0.01,111
+asu,15,0.01,79,0.0,225
+rehab,12,0.11,9,0.05,20
+rehab,13,0.08,13,0.03,32
+rehab,14,0.05,20,0.02,57
+rehab,15,0.03,31,0.01,101
+rehab,16,0.02,52,0.0,212
