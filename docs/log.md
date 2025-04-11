@@ -806,3 +806,51 @@ I then add new tests based on the python template and on the tests ran in https:
 I add methods to check parameter validity in `Param`. This flagged that rehab other routing probability don't sum to 100% (88% and 13%) - but this is as described in the paper, and presumed to be due to rounding, so altered the validation test to allow.
 
 > 💡 When explain tests, could do all in one section, like Tests > Back tests, Tests > Functional tests, Tests > Unit tests - and then on each of those pages, it's like, if you have parameter validation... if you have warm-up... etc. etc. suggesting tests could include.
+
+## Scenario logic
+
+Having successfully implemented the base model generating Figure 1 and 3 (as in https://github.com/pythonhealthdatascience/llm_simpy/), I then moved on to the scenarios from Monks et al. 2016. These were:
+
+0. **Current admissions** Current admission levels; beds are reserved for either acute or rehab patients
+1. **5% more admissions** A 5% increase in admissions across all patient subgroups.
+2. **Pooling of acute and rehab beds** The acute and rehab wards are co-located at same site. Beds are pooled and can be used by either acute or rehabilitation patients. Pooling of the total bed stock of 22 is compared to the pooling of an increased bed stock of 26.
+3. **Partial pooling of acute and rehab beds** The acute and rehab wards are co-located at same site. A subset of the 26 beds are pooled and can be used by either acute or rehab patients.
+4. **No complex-neurological cases** Complex neurological patients are excluded from the pathway in order to assess their impact on bed requirements
+
+### Scenario 1 and 4
+
+As from the supplementary:
+
+> "Scenarios investigating increased demand multiply the mean arrival rates (supplied in main text) by the appropriate factor. To exclude a particular patient group, the mean inter-arrival time for that group is multiplied by a large number such that no arrivals will occur in the modelled time horizon."
+
+Hence, it is understood that:
+
+* **Scenario 1** can be achieved by multiplying all patient IAT by 1.05 (see below: 0.95).
+* **Scenario 4** can be achieved by multiplying IAT for complex neurological patients by a very high number (e.g. 10,000,000) - and can add a test which checks no patients are complex neurological.
+
+## Using multiple replications
+
+Altered `Runner` to output summary tables from across replications, and switched to using these for Figures 1 and 3.
+
+## Scenario 1 + Table 2
+
+Ran scenario 1 in `analysis.ipynb` and created Table 2. Noticed some differences. 
+
+I find scenario with same bed number, probability of delay drops. They find that it goes up.
+
+Thinking through the logic, scenario has more arrivals -> wards more full -> expect delays for lower max bed numbers earlier -> expect higher probability of delay for lower bed numbers.
+
+I then realised my mistake! I had actually lower admissions, as I'd multiplied IAT by 1.05, when I should've multiplied by 0.95.
+
+## Scenario 4 + supplementary table 1
+
+Ran scenario, adjusted function from table 2 so it could be used to make this table too.
+
+## Scenario logic
+
+We now have two remaining scenarios:
+
+* Scenario 2: **Pooling of acute and rehab beds** The acute and rehab wards are co-located at same site. Beds are pooled and can be used by either acute or rehabilitation patients. Pooling of the total bed stock of 22 is compared to the pooling of an increased bed stock of 26.
+* Scenario 3: **Partial pooling of acute and rehab beds** The acute and rehab wards are co-located at same site. A subset of the 26 beds are pooled and can be used by either acute or rehab patients.
+
+It took quite a while to understand the formula and how to implement them.
