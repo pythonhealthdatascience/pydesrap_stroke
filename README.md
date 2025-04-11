@@ -14,15 +14,31 @@ This repository applies the [Python DES RAP Template](https://github.com/pythonh
 
 > Monks T, Worthington D, Allen M, Pitt M, Stein K, James MA. A modelling tool for capacity planning in acute and community stroke services. BMC Health Serv Res. 2016 Sep 29;16(1):530. doi: [10.1186/s12913-016-1789-4](https://doi.org/10.1186/s12913-016-1789-4). PMID: 27688152; PMCID: PMC5043535.
 
+Model diagram:
+
 ![](images/stroke_rehab_design.png)
 
 <br>
 
 ## Installation
 
-TBC
+Clone the repository locally:
 
-<!-- TODO: Provide instructions for installing dependencies and setting up the environment. -->
+```
+git clone https://github.com/pythonhealthdatascience/stroke_rap_python.git
+cd stroke_rap_python
+```
+
+Use the provided `environment.yaml` file to set up a Python environment with `conda`:
+
+```
+conda env create --file environment.yaml
+conda activate
+```
+
+The provided `environment.yaml` file is a snapshot of the environment used when creating the repository, including specific package versions. You can update this file if necessary, but be sure to test that everything continues to work as expected after any updates. Also note that some dependencies are not required for modelling, but instead served other purposes, like running `.ipynb` files and linting.
+
+As an alternative, a `requirements.txt` file is provided which can be used to set up the environment with `virtualenv`. This is used by GitHub actions, which run much faster with a virtual environment than a conda environment. However, we recommend locally installing the environment using conda, as it will also manage the Python version for you. If using `virtualenv`, it won't fetch a specific version of Python - so please note the version listed in `environment.yaml`.
 
 <br>
 
@@ -49,7 +65,7 @@ Example altering the model parameters:
 from simulation.parameters import Param, ASUArrivals, RehabRouting
 from simulation.runner import Runner
 
-# Modified on of the arrival rates, some routing probabilities, and the
+# Modified one of the arrival rates, some routing probabilities, and the
 # number of replications
 param = Param(
     asu_arrivals=ASUArrivals(tia=10),
@@ -60,9 +76,20 @@ runner = Runner(param=param)
 rep_results = runner.run_reps()
 ```
 
-### Generating the figures from the article
+### Generating the results from the article
 
-The original study used Simul8. Each of the outputs from that article have been reproduced in this repository using Python, with some examples below. To generate these, simply execute `notebooks/analysis.ipynb`.
+The original study used Simul8. Each of the outputs from that article have been replicated in this repository using Python:
+
+* Figure 1. Simulation probability density function for occupancy of an acute stroke unit.
+* Figure 3. Simulated trade-off between the probability that a patient is delayed and the no. of acute beds available.
+* Table 2. Likelihood of delay. Current admissions versus 5% more admissions.
+* Table 3. Results of pooling of acute and rehab beds.
+* Supplementary Table 1. Likelihood of delay. Current admissions versus No Complex neurological patients.
+* Supplementary Table 3. Likelihood of delay. Current admissions versus ring fenced acute stroke beds.
+
+To generate these, simply execute `notebooks/analysis.ipynb`.
+
+<!--TODO: Update this is not all executed in that single notebook-->
 
 #### Examples
 
