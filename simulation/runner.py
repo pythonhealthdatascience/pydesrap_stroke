@@ -70,6 +70,7 @@ class Runner:
         1. Percentage
         2. Cumulative percentage
         3. Probability of delay
+        4. 1 in every n patients delays
 
         Parameters
         ----------
@@ -85,6 +86,9 @@ class Runner:
 
         # Calculate the probability of delay
         df["prob_delay"] = df["pct"] / df["c_pct"]
+
+        #  Add column with calculation of 1 in every n patients delayed
+        df["1_in_n_delay"] = round(1 / df["prob_delay"])
 
         return df
 
@@ -103,11 +107,28 @@ class Runner:
         rehab_occupancy = self.get_occupancy_freq(
             audit_list=model.audit_list, unit="rehab")
 
-        return {"asu": asu_occupancy, "rehab": rehab_occupancy}
+        # Return the raw audit list and calculated occupancy frequencies
+        return {"audit_list": model.audit_list,
+                "asu": asu_occupancy,
+                "rehab": rehab_occupancy}
 
     def run_reps(self):
         """
         Execute a single model configuration for multiple runs/replications.
+
+        Returns
+        -------
+        result : dict of str -> pd.DataFrame
+            Dictionary containing concatenated occupancy dataframes for each
+            unit (e.g., 'asu' and 'rehab'), with an added 'run' column
+            indicating the replication.
+        overall : dict of str -> pd.DataFrame
+            Dictionary containing summary statistics for each unit, including
+            frequency, percentage, cumulative percentage, and probability of
+            delay.
+        combined_audit_list : list
+            Combined audit list containing all audit entries from every
+            replication, concatenated into a single list.
         """
         # Sequential execution
         if self.param.cores == 1:
@@ -163,4 +184,9 @@ class Runner:
             # delay, and save to dictionary
             overall[unit] = self.calculate_occupancy_stats(comb)
 
-        return result, overall
+        # Combine all audit lists from every replication into one list
+        combined_audit_list = []
+        for entry in results:
+            combined_audit_list.extend(entry["audit_list"])
+
+        return result, overall, combined_audit_list
