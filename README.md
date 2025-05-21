@@ -3,10 +3,10 @@
 # Stroke capacity planning model: python DES RAP
 
 [![python](https://img.shields.io/badge/-Python_3.13.1-blue?logo=python&logoColor=white)](https://www.python.org/)
-![licence](https://img.shields.io/badge/Licence-MIT-green.svg?labelColor=gray)
+![licence](https://img.shields.io/badge/🛡️_Licence-MIT-green.svg?labelColor=gray)
 [![Tests](https://github.com/pythonhealthdatascience/stroke_rap_python/actions/workflows/tests.yaml/badge.svg)](https://github.com/pythonhealthdatascience/stroke_rap_python/actions/workflows/tests.yaml)
 [![Linting](https://github.com/pythonhealthdatascience/stroke_rap_python/actions/workflows/lint.yaml/badge.svg)](https://github.com/pythonhealthdatascience/stroke_rap_python/actions/workflows/lint.yaml)
-[![ORCID: Heather](https://img.shields.io/badge/ORCID_Amy_Heather-0000--0002--6596--3479-brightgreen)](https://orcid.org/0000-0002-6596-3479)
+[![ORCID](https://img.shields.io/badge/ORCID_Amy_Heather-0000--0002--6596--3479-A6CE39?&logo=orcid&logoColor=white)](https://orcid.org/0000-0002-6596-3479)
 
 </div>
 
@@ -88,8 +88,6 @@ The original study used Simul8. Each of the outputs from that article have been 
 * Supplementary Table 3. Likelihood of delay. Current admissions versus ring fenced acute stroke beds.
 
 To generate these, simply execute `notebooks/analysis.ipynb`.
-
-<!--TODO: Update this is not all executed in that single notebook-->
 
 #### Examples
 
