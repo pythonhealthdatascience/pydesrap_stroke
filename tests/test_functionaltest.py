@@ -98,6 +98,7 @@ def test_long_los(stroke_no_esd_mean):
     param = Param(
         asu_los=ASULOS(stroke_no_esd_mean=stroke_no_esd_mean,
                        stroke_esd_mean=los,
+                       stroke_mortality_mean=los,
                        tia_mean=los,
                        neuro_mean=los,
                        other_mean=los),
