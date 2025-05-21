@@ -165,7 +165,7 @@ class Model:
             # Get a list of the patients in that unit (ignore other attributes)
             patient_types = [attr for attr in dir(unit_param) if attr in
                              ["stroke", "stroke_esd", "stroke_noesd",
-                              "tia", "neuro", "other"]]
+                              "stroke_mortality", "tia", "neuro", "other"]]
 
             # For each patient type...
             for patient_type in patient_types:
@@ -253,13 +253,19 @@ class Model:
             msg=(f"Patient {patient.patient_id} ({patient.patient_type}) " +
                  f"post-ASU: {patient.post_asu_destination}"))
 
-        # If it is a stroke patient,find out if they are going to the ESD
-        # (stroke_esd) or not (stroke_noesd) - else, just same as patient_type
+        # If it is a stroke patient, find out if they are going to the ESD
+        # (stroke_esd) or not (stroke_noesd) or if they pass away
+        # (stroke_mortality). For other patients, just same as patient_type.
         if patient.patient_type == "stroke":
             if patient.post_asu_destination == "esd":
                 routing_type = "stroke_esd"
-            else:
+            elif patient.post_asu_destination == "rehab":
                 routing_type = "stroke_noesd"
+            elif patient.post_asu_destination == "other":
+                routing_type = "stroke_mortality"
+            else:
+                raise ValueError("Stroke post-asu destination '" +
+                                 f"{patient.post_asu_destination}' invalid")
         else:
             routing_type = patient.patient_type
 

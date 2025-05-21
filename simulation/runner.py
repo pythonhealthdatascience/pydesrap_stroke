@@ -59,6 +59,25 @@ class Runner:
         df = pd.DataFrame(
             complete_frequency.items(), columns=["beds", "freq"])
 
+        # Calculate percentage, cumulative percentage and probability of delay
+        df = self.calculate_occupancy_stats(df)
+
+        return df
+
+    def calculate_occupancy_stats(self, df):
+        """
+        Given the frequencies of each occupancy level, calculates:
+        1. Percentage
+        2. Cumulative percentage
+        3. Probability of delay
+        4. 1 in every n patients delays
+
+        Parameters
+        ----------
+        df: pd.Dataframe
+            Dataframe containing the frequency of each occupancy level
+            (e.g. as output by get_occupancy_freq()).
+        """
         # Add column with frequencies converted to proportions
         df["pct"] = df["freq"] / df["freq"].sum()
 
@@ -67,6 +86,9 @@ class Runner:
 
         # Calculate the probability of delay
         df["prob_delay"] = df["pct"] / df["c_pct"]
+
+        #  Add column with calculation of 1 in every n patients delayed
+        df["1_in_n_delay"] = round(1 / df["prob_delay"])
 
         return df
 
@@ -85,11 +107,28 @@ class Runner:
         rehab_occupancy = self.get_occupancy_freq(
             audit_list=model.audit_list, unit="rehab")
 
-        return {"asu": asu_occupancy, "rehab": rehab_occupancy}
+        # Return the raw audit list and calculated occupancy frequencies
+        return {"audit_list": model.audit_list,
+                "asu": asu_occupancy,
+                "rehab": rehab_occupancy}
 
     def run_reps(self):
         """
         Execute a single model configuration for multiple runs/replications.
+
+        Returns
+        -------
+        result : dict of str -> pd.DataFrame
+            Dictionary containing concatenated occupancy dataframes for each
+            unit (e.g., 'asu' and 'rehab'), with an added 'run' column
+            indicating the replication.
+        overall : dict of str -> pd.DataFrame
+            Dictionary containing summary statistics for each unit, including
+            frequency, percentage, cumulative percentage, and probability of
+            delay.
+        combined_audit_list : list
+            Combined audit list containing all audit entries from every
+            replication, concatenated into a single list.
         """
         # Sequential execution
         if self.param.cores == 1:
@@ -122,4 +161,32 @@ class Runner:
                 delayed(self.run_single)(run)
                 for run in range(self.param.number_of_runs))
 
-        return results
+        # Extract dataframes and add run column
+        rep_dataframes = {"asu": [], "rehab": []}
+        for i, entry in enumerate(results):
+            for key in ["asu", "rehab"]:
+                df_copy = entry[key].copy()
+                df_copy["run"] = i
+                rep_dataframes[key].append(df_copy)
+
+        # Concatenate the ASU and rehab dataframes into a single dataframe each
+        result = {key: pd.concat(dfs) for key, dfs in rep_dataframes.items()}
+
+        # Create a summary dataframe for each unit with the overall frequency
+        # and occupancy for each bed
+        overall = {}
+        for unit in ["asu", "rehab"]:
+            # Sum the count the frequencies of beds across replications
+            comb = (result[unit]
+                    .groupby("beds", as_index=False)["freq"]
+                    .sum())
+            # Calculate percentage, cumulative percentage and probability of
+            # delay, and save to dictionary
+            overall[unit] = self.calculate_occupancy_stats(comb)
+
+        # Combine all audit lists from every replication into one list
+        combined_audit_list = []
+        for entry in results:
+            combined_audit_list.extend(entry["audit_list"])
+
+        return result, overall, combined_audit_list

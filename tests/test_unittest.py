@@ -231,6 +231,7 @@ def test_get_occupancy_freq():
     expected_pct = [0.4, 0.3, 0.2, 0.1]
     expected_c_pct = [0.4, 0.7, 0.9, 1.0]
     expected_prob_delay = [1.0, 0.3/0.7, 0.2/0.9, 0.1/1.0]
+    expected_1_in_n_delay = [1, 2, 4, 10]
 
     # Create a Runner instance
     runner = Runner(None)
@@ -240,7 +241,7 @@ def test_get_occupancy_freq():
 
     # Check the structure of the DataFrame
     assert list(result_df.columns) == [
-        "beds", "freq", "pct", "c_pct", "prob_delay"]
+        "beds", "freq", "pct", "c_pct", "prob_delay", "1_in_n_delay"]
 
     # Check the values
     assert list(result_df["beds"]) == expected_beds
@@ -248,8 +249,9 @@ def test_get_occupancy_freq():
     assert np.allclose(result_df["pct"], expected_pct)
     assert np.allclose(result_df["c_pct"], expected_c_pct)
 
-    # Check prob_delay calculation
+    # Check prob_delay and 1 in n delay calculations
     assert np.allclose(result_df["prob_delay"], expected_prob_delay)
+    assert np.allclose(result_df["1_in_n_delay"], expected_1_in_n_delay)
 
 
 # -----------------------------------------------------------------------------
