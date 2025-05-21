@@ -137,6 +137,7 @@ class ASULOS(RestrictAttributes):
         self,
         stroke_no_esd_mean=7.4, stroke_no_esd_sd=8.61,
         stroke_esd_mean=4.6, stroke_esd_sd=4.8,
+        stroke_mortality_mean=7.0, stroke_mortality_sd=8.7,
         tia_mean=1.8, tia_sd=2.3,
         neuro_mean=4.0, neuro_sd=5.0,
         other_mean=3.8, other_sd=5.2
@@ -153,6 +154,10 @@ class ASULOS(RestrictAttributes):
             Mean LOS for stroke patients with ESD.
         stroke_esd_sd: float
             SD of LOS for stroke patients with ESD.
+        stroke_mortality_mean: float
+            Mean LOS for stroke patients who pass away.
+        stroke_mortality_sd: float
+            SD of LOS for stroke patients who pass away.
         tia_mean: float
             Mean LOS for TIA patients.
         tia_sd: float
@@ -173,6 +178,10 @@ class ASULOS(RestrictAttributes):
         self.stroke_esd = {
             "mean": stroke_esd_mean,
             "sd": stroke_esd_sd
+        }
+        self.stroke_mortality = {
+            "mean": stroke_mortality_mean,
+            "sd": stroke_mortality_sd
         }
         self.tia = {
             "mean": tia_mean,
