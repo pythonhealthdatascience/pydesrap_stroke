@@ -1,0 +1,348 @@
+0.000: Initialise model:
+
+{   'arrival_dist': {   'asu': {   'neuro': <sim_tools.distributions.Exponential object at 0x7c3320d69160>,
+                                   'other': <sim_tools.distributions.Exponential object at 0x7c3320d65450>,
+                                   'stroke': <sim_tools.distributions.Exponential object at 0x7c3320d65590>,
+                                   'tia': <sim_tools.distributions.Exponential object at 0x7c3320d05e00>},
+                        'rehab': {   'neuro': <sim_tools.distributions.Exponential object at 0x7c3320d05f30>,
+                                     'other': <sim_tools.distributions.Exponential object at 0x7c3324a12690>,
+                                     'stroke': <sim_tools.distributions.Exponential object at 0x7c33e9296030>}},
+    'asu_occupancy': 0,
+    'audit_interval': 1,
+    'audit_list': [],
+    'env': <simpy.core.Environment object at 0x7c3320d69010>,
+    'los_dist': {   'asu': {   'neuro': <sim_tools.distributions.Lognormal object at 0x7c3320d69400>,
+                               'other': <sim_tools.distributions.Lognormal object at 0x7c3320d65950>,
+                               'stroke_esd': <sim_tools.distributions.Lognormal object at 0x7c3320d65a90>,
+                               'stroke_mortality': <sim_tools.distributions.Lognormal object at 0x7c3320d062c0>,
+                               'stroke_noesd': <sim_tools.distributions.Lognormal object at 0x7c3320d063f0>,
+                               'tia': <sim_tools.distributions.Lognormal object at 0x7c33259f6c30>},
+                    'rehab': {   'neuro': <sim_tools.distributions.Lognormal object at 0x7c33210129c0>,
+                                 'other': <sim_tools.distributions.Lognormal object at 0x7c3321012ad0>,
+                                 'stroke_esd': <sim_tools.distributions.Lognormal object at 0x7c33240e4b50>,
+                                 'stroke_noesd': <sim_tools.distributions.Lognormal object at 0x7c3320d92650>,
+                                 'tia': <sim_tools.distributions.Lognormal object at 0x7c33258b34d0>}},
+    'param': <simulation.parameters.Param object at 0x7c3320d68440>,
+    'patients': [],
+    'rehab_occupancy': 0,
+    'routing_dist': {   'asu': {   'neuro': <sim_tools.distributions.Discrete object at 0x7c3320d692b0>,
+                                   'other': <sim_tools.distributions.Discrete object at 0x7c3320d656d0>,
+                                   'stroke': <sim_tools.distributions.Discrete object at 0x7c3320d65810>,
+                                   'tia': <sim_tools.distributions.Discrete object at 0x7c3320d06060>},
+                        'rehab': {   'neuro': <sim_tools.distributions.Discrete object at 0x7c3320d06190>,
+                                     'other': <sim_tools.distributions.Discrete object at 0x7c33259f7e30>,
+                                     'stroke': <sim_tools.distributions.Discrete object at 0x7c33210127a0>,
+                                     'tia': <sim_tools.distributions.Discrete object at 0x7c33210128b0>}},
+    'run_number': 0,
+    'seed_generator': <list_iterator object at 0x7c33e92d92a0>}
+Parameters:
+ 
+{   '_initialised': True,
+    'asu_arrivals': <simulation.parameters.ASUArrivals object at 0x7c33e92ca120>,
+    'asu_los': <simulation.parameters.ASULOS object at 0x7c33e8a33b60>,
+    'asu_routing': <simulation.parameters.ASURouting object at 0x7c33e8a33e00>,
+    'audit_interval': 1,
+    'cores': 1,
+    'data_collection_period': 40,
+    'logger': <simulation.logging.SimLogger object at 0x7c3320d68590>,
+    'number_of_runs': 150,
+    'rehab_arrivals': <simulation.parameters.RehabArrivals object at 0x7c33e8a33a10>,
+    'rehab_los': <simulation.parameters.RehabLOS object at 0x7c33e8a33cb0>,
+    'rehab_routing': <simulation.parameters.RehabRouting object at 0x7c33e893c050>,
+    'warm_up_period': 15}
+Logger:
+ 
+{   'file_path': '../outputs/logs/log_example.log',
+    'log_to_console': True,
+    'log_to_file': True,
+    'logger': <Logger simulation.logging (INFO)>,
+    'sanitise': False}
+ASU arrivals:
+ 
+{'_initialised': True, 'neuro': 3.6, 'other': 3.2, 'stroke': 1.2, 'tia': 9.3}
+ASU LOS:
+ 
+{   '_initialised': True,
+    'neuro': {'mean': 4.0, 'sd': 5.0},
+    'other': {'mean': 3.8, 'sd': 5.2},
+    'stroke_esd': {'mean': 4.6, 'sd': 4.8},
+    'stroke_mortality': {'mean': 7.0, 'sd': 8.7},
+    'stroke_noesd': {'mean': 7.4, 'sd': 8.61},
+    'tia': {'mean': 1.8, 'sd': 2.3}}
+ASU routing:
+ 
+{   '_initialised': True,
+    'neuro': {'esd': 0.05, 'other': 0.84, 'rehab': 0.11},
+    'other': {'esd': 0.1, 'other': 0.85, 'rehab': 0.05},
+    'stroke': {'esd': 0.13, 'other': 0.63, 'rehab': 0.24},
+    'tia': {'esd': 0.01, 'other': 0.98, 'rehab': 0.01}}
+Rehab arrivals:
+ 
+{'_initialised': True, 'neuro': 31.7, 'other': 28.6, 'stroke': 21.8}
+Rehab LOS:
+ 
+{   '_initialised': True,
+    'neuro': {'mean': 27.6, 'sd': 28.4},
+    'other': {'mean': 16.1, 'sd': 14.1},
+    'stroke_esd': {'mean': 30.3, 'sd': 23.1},
+    'stroke_noesd': {'mean': 28.4, 'sd': 27.2},
+    'tia': {'mean': 18.7, 'sd': 23.5}}
+Rehab routing:
+ 
+{   '_initialised': True,
+    'neuro': {'esd': 0.09, 'other': 0.91},
+    'other': {'esd': 0.13, 'other': 0.88},
+    'stroke': {'esd': 0.4, 'other': 0.6},
+    'tia': {'esd': 0, 'other': 1}}
+1.836: Patient 1 (stroke) arrive at ASU.
+1.836: Patient 1 (stroke) post-ASU: other
+1.836: Patient 1 (stroke) LOS on ASU: 2.638
+1.974: Patient 2 (stroke) arrive at ASU.
+1.974: Patient 2 (stroke) post-ASU: other
+1.974: Patient 2 (stroke) LOS on ASU: 3.950
+2.570: Patient 3 (other) arrive at ASU.
+2.570: Patient 3 (other) post-ASU: other
+2.570: Patient 3 (other) LOS on ASU: 0.824
+3.388: Patient 4 (stroke) arrive at ASU.
+3.388: Patient 4 (stroke) post-ASU: other
+3.388: Patient 4 (stroke) LOS on ASU: 11.445
+3.792: Patient 5 (other) arrive at ASU.
+3.792: Patient 5 (other) post-ASU: other
+3.792: Patient 5 (other) LOS on ASU: 1.487
+4.958: Patient 6 (other) arrive at ASU.
+4.958: Patient 6 (other) post-ASU: other
+4.958: Patient 6 (other) LOS on ASU: 7.023
+5.984: Patient 7 (stroke) arrive at ASU.
+5.984: Patient 7 (stroke) post-ASU: other
+5.984: Patient 7 (stroke) LOS on ASU: 4.847
+6.445: Patient 8 (stroke) arrive at ASU.
+6.445: Patient 8 (stroke) post-ASU: other
+6.445: Patient 8 (stroke) LOS on ASU: 1.870
+6.652: Patient 9 (other) arrive at ASU.
+6.652: Patient 9 (other) post-ASU: other
+6.652: Patient 9 (other) LOS on ASU: 2.067
+7.044: Patient 10 (stroke) arrive at ASU.
+7.044: Patient 10 (stroke) post-ASU: other
+7.044: Patient 10 (stroke) LOS on ASU: 3.566
+7.452: Patient 11 (stroke) arrive at ASU.
+7.452: Patient 11 (stroke) post-ASU: other
+7.452: Patient 11 (stroke) LOS on ASU: 1.841
+8.593: Patient 12 (stroke) arrive at ASU.
+8.593: Patient 12 (stroke) post-ASU: other
+8.593: Patient 12 (stroke) LOS on ASU: 1.116
+8.879: Patient 13 (stroke) arrive at rehab.
+8.879: Patient 13 (stroke) post-rehab: esd
+8.879: Patient 13 (stroke) LOS on rehab unit: 18.725
+9.668: Patient 14 (stroke) arrive at ASU.
+9.668: Patient 14 (stroke) post-ASU: other
+9.668: Patient 14 (stroke) LOS on ASU: 1.535
+9.802: Patient 15 (other) arrive at rehab.
+9.802: Patient 15 (other) post-rehab: other
+9.802: Patient 15 (other) LOS on rehab unit: 8.810
+9.961: Patient 16 (stroke) arrive at ASU.
+9.961: Patient 16 (stroke) post-ASU: other
+9.961: Patient 16 (stroke) LOS on ASU: 1.099
+9.970: Patient 17 (stroke) arrive at ASU.
+9.970: Patient 17 (stroke) post-ASU: other
+9.970: Patient 17 (stroke) LOS on ASU: 2.778
+10.476: Patient 18 (stroke) arrive at ASU.
+10.476: Patient 18 (stroke) post-ASU: other
+10.476: Patient 18 (stroke) LOS on ASU: 0.558
+11.511: Patient 19 (stroke) arrive at ASU.
+11.511: Patient 19 (stroke) post-ASU: esd
+11.511: Patient 19 (stroke) LOS on ASU: 2.014
+11.857: Patient 20 (neuro) arrive at ASU.
+11.857: Patient 20 (neuro) post-ASU: other
+11.857: Patient 20 (neuro) LOS on ASU: 1.487
+12.144: Patient 21 (stroke) arrive at ASU.
+12.144: Patient 21 (stroke) post-ASU: other
+12.144: Patient 21 (stroke) LOS on ASU: 10.917
+13.471: Patient 22 (tia) arrive at ASU.
+13.471: Patient 22 (tia) post-ASU: other
+13.471: Patient 22 (tia) LOS on ASU: 1.005
+13.921: Patient 23 (stroke) arrive at ASU.
+13.921: Patient 23 (stroke) post-ASU: other
+13.921: Patient 23 (stroke) LOS on ASU: 1.755
+14.261: Patient 24 (stroke) arrive at ASU.
+14.261: Patient 24 (stroke) post-ASU: other
+14.261: Patient 24 (stroke) LOS on ASU: 4.977
+14.374: Patient 25 (tia) arrive at ASU.
+14.374: Patient 25 (tia) post-ASU: other
+14.374: Patient 25 (tia) LOS on ASU: 1.607
+14.604: Patient 26 (neuro) arrive at ASU.
+14.604: Patient 26 (neuro) post-ASU: rehab
+14.604: Patient 26 (neuro) LOS on ASU: 5.896
+15.000: ──────────
+15.000: Warm up complete.
+15.000: ──────────
+15.575: Patient 1 (other) arrive at ASU.
+15.575: Patient 1 (other) post-ASU: other
+15.575: Patient 1 (other) LOS on ASU: 8.743
+16.305: Patient 2 (stroke) arrive at ASU.
+16.305: Patient 2 (stroke) post-ASU: other
+16.305: Patient 2 (stroke) LOS on ASU: 3.302
+17.393: Patient 3 (stroke) arrive at ASU.
+17.393: Patient 3 (stroke) post-ASU: esd
+17.393: Patient 3 (stroke) LOS on ASU: 19.917
+19.112: Patient 4 (neuro) arrive at ASU.
+19.112: Patient 4 (neuro) post-ASU: other
+19.112: Patient 4 (neuro) LOS on ASU: 1.795
+19.926: Patient 5 (neuro) arrive at ASU.
+19.926: Patient 5 (neuro) post-ASU: esd
+19.926: Patient 5 (neuro) LOS on ASU: 1.736
+20.500: Patient 26 (neuro) arrive at rehab.
+20.500: Patient 26 (neuro) post-rehab: other
+20.500: Patient 26 (neuro) LOS on rehab unit: 8.766
+20.721: Patient 6 (neuro) arrive at ASU.
+20.721: Patient 6 (neuro) post-ASU: other
+20.721: Patient 6 (neuro) LOS on ASU: 4.809
+21.850: Patient 7 (other) arrive at ASU.
+21.850: Patient 7 (other) post-ASU: other
+21.850: Patient 7 (other) LOS on ASU: 0.532
+22.650: Patient 8 (stroke) arrive at ASU.
+22.650: Patient 8 (stroke) post-ASU: other
+22.650: Patient 8 (stroke) LOS on ASU: 2.105
+22.881: Patient 9 (stroke) arrive at ASU.
+22.881: Patient 9 (stroke) post-ASU: other
+22.881: Patient 9 (stroke) LOS on ASU: 1.423
+23.232: Patient 10 (stroke) arrive at ASU.
+23.232: Patient 10 (stroke) post-ASU: rehab
+23.232: Patient 10 (stroke) LOS on ASU: 1.243
+23.265: Patient 11 (stroke) arrive at ASU.
+23.265: Patient 11 (stroke) post-ASU: other
+23.265: Patient 11 (stroke) LOS on ASU: 2.883
+24.034: Patient 12 (stroke) arrive at ASU.
+24.034: Patient 12 (stroke) post-ASU: rehab
+24.034: Patient 12 (stroke) LOS on ASU: 4.008
+24.474: Patient 10 (stroke) arrive at rehab.
+24.474: Patient 10 (stroke) post-rehab: esd
+24.474: Patient 10 (stroke) LOS on rehab unit: 58.191
+24.887: Patient 13 (other) arrive at ASU.
+24.887: Patient 13 (other) post-ASU: other
+24.887: Patient 13 (other) LOS on ASU: 18.489
+25.065: Patient 14 (stroke) arrive at rehab.
+25.065: Patient 14 (stroke) post-rehab: esd
+25.065: Patient 14 (stroke) LOS on rehab unit: 14.018
+26.491: Patient 15 (tia) arrive at ASU.
+26.491: Patient 15 (tia) post-ASU: other
+26.491: Patient 15 (tia) LOS on ASU: 0.882
+27.156: Patient 16 (tia) arrive at ASU.
+27.156: Patient 16 (tia) post-ASU: other
+27.156: Patient 16 (tia) LOS on ASU: 0.888
+27.165: Patient 17 (stroke) arrive at ASU.
+27.165: Patient 17 (stroke) post-ASU: esd
+27.165: Patient 17 (stroke) LOS on ASU: 1.580
+27.200: Patient 18 (neuro) arrive at ASU.
+27.200: Patient 18 (neuro) post-ASU: rehab
+27.200: Patient 18 (neuro) LOS on ASU: 7.106
+27.438: Patient 19 (neuro) arrive at ASU.
+27.438: Patient 19 (neuro) post-ASU: rehab
+27.438: Patient 19 (neuro) LOS on ASU: 6.375
+28.041: Patient 12 (stroke) arrive at rehab.
+28.041: Patient 12 (stroke) post-rehab: other
+28.041: Patient 12 (stroke) LOS on rehab unit: 13.955
+28.573: Patient 20 (tia) arrive at ASU.
+28.573: Patient 20 (tia) post-ASU: other
+28.573: Patient 20 (tia) LOS on ASU: 3.929
+29.643: Patient 21 (stroke) arrive at ASU.
+29.643: Patient 21 (stroke) post-ASU: other
+29.643: Patient 21 (stroke) LOS on ASU: 0.752
+29.924: Patient 22 (stroke) arrive at ASU.
+29.924: Patient 22 (stroke) post-ASU: esd
+29.924: Patient 22 (stroke) LOS on ASU: 8.186
+30.341: Patient 23 (tia) arrive at ASU.
+30.341: Patient 23 (tia) post-ASU: other
+30.341: Patient 23 (tia) LOS on ASU: 1.105
+30.350: Patient 24 (stroke) arrive at ASU.
+30.350: Patient 24 (stroke) post-ASU: other
+30.350: Patient 24 (stroke) LOS on ASU: 6.286
+30.680: Patient 25 (neuro) arrive at ASU.
+30.680: Patient 25 (neuro) post-ASU: other
+30.680: Patient 25 (neuro) LOS on ASU: 3.188
+31.616: Patient 26 (stroke) arrive at rehab.
+31.616: Patient 26 (stroke) post-rehab: other
+31.616: Patient 26 (stroke) LOS on rehab unit: 6.933
+31.743: Patient 27 (neuro) arrive at ASU.
+31.743: Patient 27 (neuro) post-ASU: other
+31.743: Patient 27 (neuro) LOS on ASU: 6.884
+32.085: Patient 28 (stroke) arrive at ASU.
+32.085: Patient 28 (stroke) post-ASU: rehab
+32.085: Patient 28 (stroke) LOS on ASU: 5.441
+33.475: Patient 29 (stroke) arrive at ASU.
+33.475: Patient 29 (stroke) post-ASU: other
+33.475: Patient 29 (stroke) LOS on ASU: 6.249
+33.813: Patient 19 (neuro) arrive at rehab.
+33.813: Patient 19 (neuro) post-rehab: other
+33.813: Patient 19 (neuro) LOS on rehab unit: 12.630
+34.307: Patient 18 (neuro) arrive at rehab.
+34.307: Patient 18 (neuro) post-rehab: other
+34.307: Patient 18 (neuro) LOS on rehab unit: 20.422
+35.003: Patient 30 (stroke) arrive at rehab.
+35.003: Patient 30 (stroke) post-rehab: other
+35.003: Patient 30 (stroke) LOS on rehab unit: 14.955
+35.622: Patient 31 (neuro) arrive at rehab.
+35.622: Patient 31 (neuro) post-rehab: other
+35.622: Patient 31 (neuro) LOS on rehab unit: 44.240
+37.526: Patient 28 (stroke) arrive at rehab.
+37.526: Patient 28 (stroke) post-rehab: esd
+37.526: Patient 28 (stroke) LOS on rehab unit: 24.315
+38.220: Patient 32 (other) arrive at ASU.
+38.220: Patient 32 (other) post-ASU: other
+38.220: Patient 32 (other) LOS on ASU: 0.859
+39.150: Patient 33 (stroke) arrive at ASU.
+39.150: Patient 33 (stroke) post-ASU: rehab
+39.150: Patient 33 (stroke) LOS on ASU: 2.061
+39.412: Patient 34 (stroke) arrive at ASU.
+39.412: Patient 34 (stroke) post-ASU: other
+39.412: Patient 34 (stroke) LOS on ASU: 7.616
+39.788: Patient 35 (stroke) arrive at ASU.
+39.788: Patient 35 (stroke) post-ASU: other
+39.788: Patient 35 (stroke) LOS on ASU: 3.561
+40.023: Patient 36 (neuro) arrive at ASU.
+40.023: Patient 36 (neuro) post-ASU: other
+40.023: Patient 36 (neuro) LOS on ASU: 2.367
+40.100: Patient 37 (other) arrive at ASU.
+40.100: Patient 37 (other) post-ASU: rehab
+40.100: Patient 37 (other) LOS on ASU: 1.201
+41.177: Patient 38 (stroke) arrive at ASU.
+41.177: Patient 38 (stroke) post-ASU: other
+41.177: Patient 38 (stroke) LOS on ASU: 4.138
+41.211: Patient 33 (stroke) arrive at rehab.
+41.211: Patient 33 (stroke) post-rehab: other
+41.211: Patient 33 (stroke) LOS on rehab unit: 21.124
+41.300: Patient 37 (other) arrive at rehab.
+41.300: Patient 37 (other) post-rehab: other
+41.300: Patient 37 (other) LOS on rehab unit: 47.171
+42.937: Patient 39 (stroke) arrive at ASU.
+42.937: Patient 39 (stroke) post-ASU: rehab
+42.937: Patient 39 (stroke) LOS on ASU: 6.479
+46.714: Patient 40 (neuro) arrive at ASU.
+46.714: Patient 40 (neuro) post-ASU: other
+46.714: Patient 40 (neuro) LOS on ASU: 1.326
+46.767: Patient 41 (neuro) arrive at ASU.
+46.767: Patient 41 (neuro) post-ASU: other
+46.767: Patient 41 (neuro) LOS on ASU: 3.209
+47.236: Patient 42 (stroke) arrive at ASU.
+47.236: Patient 42 (stroke) post-ASU: other
+47.236: Patient 42 (stroke) LOS on ASU: 11.142
+47.902: Patient 43 (stroke) arrive at ASU.
+47.902: Patient 43 (stroke) post-ASU: other
+47.902: Patient 43 (stroke) LOS on ASU: 22.523
+49.022: Patient 44 (other) arrive at ASU.
+49.022: Patient 44 (other) post-ASU: other
+49.022: Patient 44 (other) LOS on ASU: 9.388
+49.181: Patient 45 (stroke) arrive at ASU.
+49.181: Patient 45 (stroke) post-ASU: other
+49.181: Patient 45 (stroke) LOS on ASU: 40.311
+49.415: Patient 39 (stroke) arrive at rehab.
+49.415: Patient 39 (stroke) post-rehab: esd
+49.415: Patient 39 (stroke) LOS on rehab unit: 57.821
+49.838: Patient 46 (stroke) arrive at ASU.
+49.838: Patient 46 (stroke) post-ASU: rehab
+49.838: Patient 46 (stroke) LOS on ASU: 2.396
+50.734: Patient 47 (stroke) arrive at rehab.
+50.734: Patient 47 (stroke) post-rehab: esd
+50.734: Patient 47 (stroke) LOS on rehab unit: 6.987
+52.234: Patient 46 (stroke) arrive at rehab.
+52.234: Patient 46 (stroke) post-rehab: other
+52.234: Patient 46 (stroke) LOS on rehab unit: 39.358

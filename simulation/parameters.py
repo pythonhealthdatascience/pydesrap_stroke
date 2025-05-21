@@ -5,6 +5,8 @@ It includes arrival rates, length of stay distributions, and routing
 probabilities between different care settings.
 """
 
+import time
+
 from simulation.logging import SimLogger
 
 
@@ -432,7 +434,9 @@ class Param(RestrictAttributes):
         audit_interval=1,
         cores=1,
         log_to_console=False,
-        log_to_file=False
+        log_to_file=False,
+        log_file_path=("../outputs/logs/" +
+                       f"{time.strftime("%Y-%m-%d_%H-%M-%S")}.log")
     ):
         """
         Initialise a parameter set for the simulation.
@@ -469,6 +473,9 @@ class Param(RestrictAttributes):
             Whether to print log messages to the console.
         log_to_file: boolean
             Whether to save log to a file.
+        log_file_path: str
+            Path to save log to file. Note, if you use an existing .log
+            file name, it will append to that log.
         """
         # Set parameters
         self.asu_arrivals = asu_arrivals
@@ -485,7 +492,8 @@ class Param(RestrictAttributes):
 
         # Set up logger
         self.logger = SimLogger(log_to_console=log_to_console,
-                                log_to_file=log_to_file)
+                                log_to_file=log_to_file,
+                                file_path=log_file_path)
 
     def check_param_validity(self):
         """
