@@ -4,6 +4,7 @@
 
 [![python](https://img.shields.io/badge/-Python_3.13.1-blue?logo=python&logoColor=white)](https://www.python.org/)
 ![licence](https://img.shields.io/badge/🛡️_Licence-MIT-green.svg?labelColor=gray)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15574906.svg)](https://doi.org/10.5281/zenodo.15574906)
 [![Tests](https://github.com/pythonhealthdatascience/stroke_rap_python/actions/workflows/tests.yaml/badge.svg)](https://github.com/pythonhealthdatascience/stroke_rap_python/actions/workflows/tests.yaml)
 [![Linting](https://github.com/pythonhealthdatascience/stroke_rap_python/actions/workflows/lint.yaml/badge.svg)](https://github.com/pythonhealthdatascience/stroke_rap_python/actions/workflows/lint.yaml)
 [![ORCID](https://img.shields.io/badge/ORCID_Amy_Heather-0000--0002--6596--3479-A6CE39?&logo=orcid&logoColor=white)](https://orcid.org/0000-0002-6596-3479)
@@ -123,9 +124,11 @@ The other notebooks generate results for tests and illustrate other functionalit
 
 ## Citation
 
-For this applied example, please cite:
+For this applied example, please cite either:
 
 > Heather, A. (2025). Stroke capacity planning model: python DES RAP. GitHub. https://github.com/pythonhealthdatascience/stroke_rap_python.
+>
+> Heather, A. (2025). Stroke capacity planning model: python DES RAP. Zenodo. https://doi.org/10.5281/zenodo.15574906.
 
 This example is built using the [Python DES RAP Template](https://github.com/pythonhealthdatascience/rap_template_python_des). Please also cite the original template:
 
