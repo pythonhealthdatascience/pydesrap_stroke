@@ -99,7 +99,7 @@ Original:
 
 From this repository:
 
-![](outputs/occupancy_freq_asu.png)
+![](outputs/figure1_asu.png)
 
 **Figure 3**
 
@@ -109,23 +109,15 @@ Original:
 
 From this repository:
 
-![](outputs/delay_prob_asu.png)
+![](outputs/figure3_asu.png)
 
 <br>
 
 ## Run time and machine specification
 
-TBC
+The run time for this analysis (`notebooks/analysis.ipynb`) is 10 seconds. This was on an Intel Core i7-12700H, 32GB RAM, Ubuntu 24.04.1.
 
-<!-- State the run time, and give the specification of the machine used (which achieved that run time).
-
-**Example:** Intel Core i7-12700H with 32GB RAM running Ubuntu 24.04.1 Linux. 
-
-To find this information:
-
-* **Linux:** Run `neofetch` on the terminal and record your CPU, memory and operating system.
-* **Windows:** Open "Task Manager" (Ctrl + Shift + Esc), go to the "Performance" tab, then select "CPU" and "Memory" for relevant information.
-* **Mac:** Click the "Apple Menu", select "About This Mac", then window will display the details.-->
+The other notebooks generate results for tests and illustrate other functionality (e.g. importing parameters from csv, running with logs), and these just take a second or two.
 
 <br>
 
