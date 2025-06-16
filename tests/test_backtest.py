@@ -21,7 +21,7 @@ def test_model():
     Notes
     -----
     This is adapted from `test_reproduction` in
-    github.com/pythonhealthdatascience/rap_template_python_des.
+    github.com/pythonhealthdatascience/pydesrap_mms.
     """
     # Run model and get audit list as a dataframe
     model = Model(param=Param(), run_number=0)
@@ -49,7 +49,7 @@ def test_runner(unit):
     Notes
     -----
     This is adapted from `test_reproduction` in
-    github.com/pythonhealthdatascience/rap_template_python_des.
+    github.com/pythonhealthdatascience/pydesrap_mms.
     """
     # Run model and get occupancy dataframe
     runner = Runner(param=Param())

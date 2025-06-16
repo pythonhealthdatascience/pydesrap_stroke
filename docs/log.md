@@ -760,7 +760,7 @@ Hence, at this stage, I switched to using the logging module rather than simple 
 
 > 💡 Remember trace as simpler alternative if full logs are not desired.
 
-I copied over the code from `rap_template_python_des` `logging.py`.
+I copied over the code from `pydesrap_mms` `logging.py`.
 
 I then imported this class to `Param`, with `logger` now a parameter, tweaking it so you're just setting `log_to_console` and `log_to_file` rather than needing to provide the `SimLogger` class.
 

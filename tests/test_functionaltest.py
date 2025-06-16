@@ -129,7 +129,7 @@ def test_warmup_only():
     Notes
     -----
     Inspired by `test_warmup_only` in
-    github.com/pythonhealthdatascience/rap_template_python_des/.
+    github.com/pythonhealthdatascience/pydesrap_mms/.
     """
     # Run with warm-up period only
     param = Param(warm_up_period=500, data_collection_period=0)
@@ -153,7 +153,7 @@ def test_warmup_impact():
     Notes
     -----
     Adapted from `test_warmup_impact` in
-    github.com/pythonhealthdatascience/rap_template_python_des/.
+    github.com/pythonhealthdatascience/pydesrap_mms/.
     """
     def helper_warmup(warm_up_period):
         """
@@ -209,7 +209,7 @@ def test_changing_occupancy():
     Notes
     -----
     Inspired by `test_arrivals_decrease` in
-    github.com/pythonhealthdatascience/rap_template_python_des/.
+    github.com/pythonhealthdatascience/pydesrap_mms/.
     """
     # Run model with lots of stroke arrivals (IAT 1) and fewer (IAT 100)
     initial_model = Model(Param(ASUArrivals(stroke=1)), run_number=0)
@@ -249,7 +249,7 @@ def test_seed_stability():
     Notes
     -----
     Adapted from `seed_seed_stability` in
-    github.com/pythonhealthdatascience/rap_template_python_des/.
+    github.com/pythonhealthdatascience/pydesrap_mms/.
     """
     # Run model twice, with same run number (and therefore same seed) each time
     runner1 = Runner(param=Param())
@@ -269,7 +269,7 @@ def test_parallel():
     Notes
     -----
     Adapted from `test_parallel` in
-    github.com/pythonhealthdatascience/rap_template_python_des/.
+    github.com/pythonhealthdatascience/pydesrap_mms/.
     """
     # Sequential (1 core) and parallel (-1 cores) execution
     results = {}
@@ -294,7 +294,7 @@ def test_valid_cores(cores):
 
     Notes
     -----
-    Copied from github.com/pythonhealthdatascience/rap_template_python_des/.
+    Copied from github.com/pythonhealthdatascience/pydesrap_mms/.
     """
     param = Param(cores=cores)
     runner = Runner(param)
@@ -310,7 +310,7 @@ def test_sampled_distributions():
     Notes
     -----
     Adapted from `test_sampled_times` in
-    github.com/pythonhealthdatascience/rap_template_python_des/.
+    github.com/pythonhealthdatascience/pydesrap_mms/.
     """
     param = Param()
     model = Model(param, run_number=0)

@@ -264,7 +264,7 @@ def test_log_to_console():
 
     Notes
     -----
-    Test from github.com/pythonhealthdatascience/rap_template_python_des.
+    Test from github.com/pythonhealthdatascience/pydesrap_mms.
     """
     with patch('sys.stdout', new_callable=StringIO) as mock_stdout:
         logger = SimLogger(log_to_console=True)
@@ -280,7 +280,7 @@ def test_log_to_file():
 
     Notes
     -----
-    Test from github.com/pythonhealthdatascience/rap_template_python_des.
+    Test from github.com/pythonhealthdatascience/pydesrap_mms.
     """
     # Mock the file open operation
     with patch('builtins.open', new_callable=MagicMock) as mock_open:

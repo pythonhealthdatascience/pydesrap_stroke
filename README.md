@@ -5,13 +5,13 @@
 [![python](https://img.shields.io/badge/-Python_3.13.1-blue?logo=python&logoColor=white)](https://www.python.org/)
 ![licence](https://img.shields.io/badge/🛡️_Licence-MIT-green.svg?labelColor=gray)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15574906.svg)](https://doi.org/10.5281/zenodo.15574906)
-[![Tests](https://github.com/pythonhealthdatascience/stroke_rap_python/actions/workflows/tests.yaml/badge.svg)](https://github.com/pythonhealthdatascience/stroke_rap_python/actions/workflows/tests.yaml)
-[![Linting](https://github.com/pythonhealthdatascience/stroke_rap_python/actions/workflows/lint.yaml/badge.svg)](https://github.com/pythonhealthdatascience/stroke_rap_python/actions/workflows/lint.yaml)
+[![Tests](https://github.com/pythonhealthdatascience/pydesrap_stroke/actions/workflows/tests.yaml/badge.svg)](https://github.com/pythonhealthdatascience/pydesrap_stroke/actions/workflows/tests.yaml)
+[![Linting](https://github.com/pythonhealthdatascience/pydesrap_stroke/actions/workflows/lint.yaml/badge.svg)](https://github.com/pythonhealthdatascience/pydesrap_stroke/actions/workflows/lint.yaml)
 [![ORCID](https://img.shields.io/badge/ORCID_Amy_Heather-0000--0002--6596--3479-A6CE39?&logo=orcid&logoColor=white)](https://orcid.org/0000-0002-6596-3479)
 
 </div>
 
-This repository applies the [Python DES RAP Template](https://github.com/pythonhealthdatascience/rap_template_python_des) to a real-life example:
+This repository applies the [Python DES RAP Template](https://github.com/pythonhealthdatascience/pydesrap_mms) to a real-life example:
 
 > Monks T, Worthington D, Allen M, Pitt M, Stein K, James MA. A modelling tool for capacity planning in acute and community stroke services. BMC Health Serv Res. 2016 Sep 29;16(1):530. doi: [10.1186/s12913-016-1789-4](https://doi.org/10.1186/s12913-016-1789-4). PMID: 27688152; PMCID: PMC5043535.
 
@@ -26,8 +26,8 @@ Model diagram:
 Clone the repository locally:
 
 ```
-git clone https://github.com/pythonhealthdatascience/stroke_rap_python.git
-cd stroke_rap_python
+git clone https://github.com/pythonhealthdatascience/pydesrap_stroke.git
+cd pydesrap_stroke
 ```
 
 Use the provided `environment.yaml` file to set up a Python environment with `conda`:
@@ -126,12 +126,12 @@ The other notebooks generate results for tests and illustrate other functionalit
 
 For this applied example, please cite either:
 
-> Heather, A. (2025). Stroke capacity planning model: python DES RAP. GitHub. https://github.com/pythonhealthdatascience/stroke_rap_python.
+> Heather, A. (2025). Stroke capacity planning model: python DES RAP. GitHub. https://github.com/pythonhealthdatascience/pydesrap_stroke.
 >
 > Heather, A. (2025). Stroke capacity planning model: python DES RAP. Zenodo. https://doi.org/10.5281/zenodo.15574906.
 
-This example is built using the [Python DES RAP Template](https://github.com/pythonhealthdatascience/rap_template_python_des). Please also cite the original template:
+This example is built using the [Python DES RAP Template](https://github.com/pythonhealthdatascience/pydesrap_mms). Please also cite the original template:
 
-> Heather, A. Monks, T. (2025). Python DES RAP Template. Zenodo. https://doi.org/10.5281/zenodo.14622466. GitHub. https://github.com/pythonhealthdatascience/rap_template_python_des.
+> Heather, A. Monks, T. (2025). Python DES RAP Template. Zenodo. https://doi.org/10.5281/zenodo.14622466. GitHub. https://github.com/pythonhealthdatascience/pydesrap_mms.
 
 A `CITATION.cff` file is also provided.

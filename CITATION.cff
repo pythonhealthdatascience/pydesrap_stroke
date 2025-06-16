@@ -15,7 +15,7 @@ authors:
     affiliation: University of Exeter
     orcid: 'https://orcid.org/0000-0002-6596-3479'
 repository-code: >-
-  https://github.com/pythonhealthdatascience/stroke_rap_python
+  https://github.com/pythonhealthdatascience/pydesrap_stroke
 abstract: >-
   Applying the Python DES RAP Template to the Stroke Capacity Planning Model
   from Monks et al. 2016.
