@@ -17,8 +17,8 @@ authors:
 repository-code: >-
   https://github.com/pythonhealthdatascience/pydesrap_stroke
 abstract: >-
-  Applying the Python DES RAP Template to the Stroke Capacity Planning Model
-  from Monks et al. 2016.
+  Reproducible analytical pipeline (RAP) for python discrete-event simulation
+  (DES) implementing the Stroke Capacity Planning Model from Monks et al. 2016.
 license: MIT
 version: '0.1.0'
 date-released: '2025-06-02'
