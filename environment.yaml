@@ -1,4 +1,4 @@
-name: stroke-rap-python
+name: pydesrapstroke
 channels:
   - conda-forge
 dependencies:
@@ -19,6 +19,6 @@ dependencies:
   - rich=13.9.4
   - simpy=4.1.1
   - pip:
-    - kaleido==0.2.1
+    - kaleido==1.0.0
     - sim-tools==0.8.0
     - -e .[dev]
