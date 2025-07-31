@@ -130,8 +130,23 @@ For this applied example, please cite either:
 >
 > Heather, A. (2025). Stroke capacity planning model: python DES RAP. Zenodo. https://doi.org/10.5281/zenodo.15574906.
 
-This example is built using the [Python DES RAP Template](https://github.com/pythonhealthdatascience/pydesrap_mms). Please also cite the original template:
-
-> Heather, A. Monks, T. (2025). Python DES RAP Template. Zenodo. https://doi.org/10.5281/zenodo.14622466. GitHub. https://github.com/pythonhealthdatascience/pydesrap_mms.
-
 A `CITATION.cff` file is also provided.
+
+**Contributors:**
+
+**Amy Heather** - developed the repository.
+
+* [![ORCID](https://img.shields.io/badge/ORCID-0000--0002--6596--3479-A6CE39?style=for-the-badge&logo=orcid&logoColor=white)](https://orcid.org/0000-0002-6596-3479)
+* [![GitHub](https://img.shields.io/badge/GitHub-amyheather-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/amyheather)
+
+<br>
+
+## Licence
+
+MIT Licence. See `LICENSE` for details.
+
+<br>
+
+## Funding
+
+This project was developed as part of the project STARS: Sharing Tools and Artefacts for Reproducible Simulations. It is supported by the Medical Research Council [grant number [MR/Z503915/1](https://gtr.ukri.org/projects?ref=MR%2FZ503915%2F1)].
