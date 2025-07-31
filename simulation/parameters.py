@@ -125,9 +125,10 @@ class ASULOS(RestrictAttributes):
     Attributes
     ----------
     stroke_noesd: dict
-        Mean and SD of LOS for stroke patients without early support discharge.
+        Mean and SD of LOS for stroke patients without early supported
+        discharge (ESD).
     stroke_esd: dict
-        Mean and SD of LOS for stroke patients with early support discharge.
+        Mean and SD of LOS for stroke patients with ESD.
     tia: dict
         Mean and SD of LOS for transient ischemic attack (TIA) patients.
     neuro: dict
@@ -148,8 +149,8 @@ class ASULOS(RestrictAttributes):
         Parameters
         ----------
         stroke_no_esd_mean: float
-            Mean LOS for stroke patients without early support discharge (ESD)
-            services.
+            Mean LOS for stroke patients without early supported discharge
+            (ESD) services.
         stroke_no_esd_sd: float
             SD of LOS for stroke patients without ESD.
         stroke_esd_mean: float
@@ -207,9 +208,11 @@ class RehabLOS(RestrictAttributes):
     Attributes
     ----------
     stroke_noesd: dict
-        Mean and SD of LOS for stroke patients without early support discharge.
+        Mean and SD of LOS for stroke patients without early supported
+        discharge.
     stroke_esd: dict
-        Mean and SD of LOS for stroke patients with early support discharge.
+        Mean and SD of LOS for stroke patients with early supported
+        discharge.
     tia: dict
         Mean and SD of LOS for transient ischemic attack (TIA) patients.
     neuro: dict
@@ -229,8 +232,8 @@ class RehabLOS(RestrictAttributes):
         Parameters
         ----------
         stroke_no_esd_mean: float
-            Mean LOS for stroke patients without early support discharge (ESD)
-            services.
+            Mean LOS for stroke patients without early supported discharge
+            (ESD) services.
         stroke_no_esd_sd: float
             SD of LOS for stroke patients without ESD.
         stroke_esd_mean: float
@@ -305,7 +308,7 @@ class ASURouting(RestrictAttributes):
         stroke_rehab: float
             Stroke patient to rehabilitation unit.
         stroke_esd: float
-            Stroke patient to early support discharge (ESD) services.
+            Stroke patient to early supported discharge (ESD) services.
         stroke_other: float
             Stroke patient to other destinations (e.g., own home, care
             home, mortality).
@@ -381,7 +384,7 @@ class RehabRouting(RestrictAttributes):
         Parameters
         ----------
         stroke_esd: float
-            Stroke patient to early support discharge (ESD) services.
+            Stroke patient to early supported discharge (ESD) services.
         stroke_other: float
             Stroke patient to other destinations (e.g., own home, care home,
             mortality).
