@@ -112,7 +112,7 @@ class Model:
 
         # Create all the distributions
         flat_dist = DistributionRegistry.create_batch(
-            self.param.dist_config, main_seed=self.run_number
+            config=self.param.dist_config, main_seed=self.run_number
         )
         # Restructure as dist[type][unit][patient]
         self.dist = {}
