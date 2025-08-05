@@ -374,7 +374,7 @@ class RehabRouting(RestrictAttributes):
         # Stroke patients
         stroke_esd=0.40, stroke_other=0.60,
         # TIA patients
-        tia_esd=0, tia_other=1,
+        tia_other=1,
         # Complex neurological patients
         neuro_esd=0.09, neuro_other=0.91,
         # Other patients
@@ -388,8 +388,6 @@ class RehabRouting(RestrictAttributes):
         stroke_other: float
             Stroke patient to other destinations (e.g., own home, care home,
             mortality).
-        tia_esd: float
-            TIA patient to ESD.
         tia_other: float
             TIA patient to other destinations.
         neuro_esd: float
@@ -406,7 +404,6 @@ class RehabRouting(RestrictAttributes):
             "other": stroke_other
         }
         self.tia = {
-            "esd": tia_esd,
             "other": tia_other
         }
         self.neuro = {

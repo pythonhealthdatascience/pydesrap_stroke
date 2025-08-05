@@ -4,7 +4,7 @@ Code for the simulation.
 
 import numpy as np
 import simpy
-from sim_tools.distributions import Exponential, Discrete, Lognormal
+from sim_tools.distributions import Exponential, DiscreteEmpirical, Lognormal
 
 
 class Patient:
@@ -180,7 +180,7 @@ class Model:
                         random_seed=next(self.seed_generator)
                     )
                 elif distribution_type == "discrete":
-                    distributions[unit][patient_type] = Discrete(
+                    distributions[unit][patient_type] = DiscreteEmpirical(
                         values=list(patient_param.keys()),
                         freq=list(patient_param.values()),
                         random_seed=next(self.seed_generator)

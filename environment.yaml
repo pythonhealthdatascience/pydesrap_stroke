@@ -20,5 +20,5 @@ dependencies:
   - simpy=4.1.1
   - pip:
     - kaleido==1.0.0
-    - sim-tools==0.8.0
+    - sim-tools==0.9.1
     - -e .[dev]
