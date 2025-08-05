@@ -30,7 +30,6 @@ asu,routing,other_esd,0.1,NA
 asu,routing,other_other,0.85,NA
 rehab,routing,stroke_esd,0.4,NA
 rehab,routing,stroke_other,0.6,NA
-rehab,routing,tia_esd,0,NA
 rehab,routing,tia_other,1,NA
 rehab,routing,neuro_esd,0.09,NA
 rehab,routing,neuro_other,0.91,NA

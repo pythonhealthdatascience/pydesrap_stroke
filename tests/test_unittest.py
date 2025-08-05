@@ -13,7 +13,7 @@ from unittest.mock import patch, MagicMock
 
 import numpy as np
 import pytest
-from sim_tools.distributions import Exponential, Lognormal, Discrete
+from sim_tools.distributions import Exponential, Lognormal, DiscreteEmpirical
 
 from simulation.parameters import (
     ASUArrivals, RehabArrivals, ASULOS, RehabLOS,
@@ -151,7 +151,7 @@ def test_create_distributions():
     # Check that all routing distributions are Discrete
     for _, unit_dict in model.routing_dist.items():
         for patient_type in unit_dict:
-            assert isinstance(unit_dict[patient_type], Discrete)
+            assert isinstance(unit_dict[patient_type], DiscreteEmpirical)
 
 
 def test_sampling_seed_reproducibility():
