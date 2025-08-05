@@ -10,8 +10,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from simulation.parameters import (ASUArrivals, RehabArrivals, ASULOS,
-                                   RehabLOS, Param)
+from simulation.parameters import Param
 from simulation.model import Model
 from simulation.runner import Runner
 
@@ -61,10 +60,10 @@ def test_high_iat():
     Inspired by `ev_test_2` from github.com/pythonhealthdatascience/llm_simpy/.
     """
     # Set high inter-arrival time for all patient types
-    iat = 10_000_000
-    param = Param(
-        asu_arrivals=ASUArrivals(stroke=iat, tia=iat, neuro=iat, other=iat),
-        rehab_arrivals=RehabArrivals(stroke=iat, neuro=iat, other=iat))
+    param = Param()
+    for key in param.dist_config:
+        if "arrival" in key:
+            param.dist_config[key]["params"]["mean"] = 10_000_000
 
     # Run the model
     model = Model(param=param, run_number=0)
@@ -78,8 +77,8 @@ def test_high_iat():
     assert model.rehab_occupancy == 0
 
 
-@pytest.mark.parametrize("stroke_no_esd_mean", [(10_000_000), (5)])
-def test_long_los(stroke_no_esd_mean):
+@pytest.mark.parametrize("stroke_noesd_mean", [(10_000_000), (5)])
+def test_long_los(stroke_noesd_mean):
     """
     Extreme value test, setting a very long length of stay for:
     1. All patients -> expect no patients to depart the model.
@@ -94,20 +93,13 @@ def test_long_los(stroke_no_esd_mean):
     # Set high length of stay for all patient types except stroke_no_esd_mean.
     # Also, no warm-up period, otherwise arrivals != occupancy (as arrivals
     # excludes warm-up, but occupancy does not, if they are still present).
-    los = 10_000_000
-    param = Param(
-        asu_los=ASULOS(stroke_no_esd_mean=stroke_no_esd_mean,
-                       stroke_esd_mean=los,
-                       stroke_mortality_mean=los,
-                       tia_mean=los,
-                       neuro_mean=los,
-                       other_mean=los),
-        rehab_los=RehabLOS(stroke_no_esd_mean=stroke_no_esd_mean,
-                           stroke_esd_mean=los,
-                           tia_mean=los,
-                           neuro_mean=los,
-                           other_mean=los),
-        warm_up_period=0)
+    param = Param(warm_up_period=0, data_collection_period=1000)
+    for key in param.dist_config:
+        if "los" in key:
+            if "stroke_noesd" in key:
+                param.dist_config[key]["params"]["mean"] = stroke_noesd_mean
+            else:
+                param.dist_config[key]["params"]["mean"] = 10_000_000
 
     # Run the model
     model = Model(param=param, run_number=0)
@@ -115,9 +107,9 @@ def test_long_los(stroke_no_esd_mean):
 
     # Check that the total arrivals is equal to or less than total occupancy
     total_occupancy = model.asu_occupancy + model.rehab_occupancy
-    if stroke_no_esd_mean == 10_000_000:
+    if stroke_noesd_mean == 10_000_000:
         assert len(model.patients) == total_occupancy
-    elif stroke_no_esd_mean == 5:
+    elif stroke_noesd_mean == 5:
         assert len(model.patients) > total_occupancy
 
 
@@ -159,10 +151,11 @@ def test_warmup_impact():
         """
         Helper function to run model with high arrivals and specified warm-up.
 
-        Arguments:
-            warm_up_period (float):
-                Duration of the warm-up period - running simulation but not yet
-                collecting results.
+        Parameters
+        ----------
+        warm_up_period : float
+            Duration of the warm-up period - running simulation but not yet
+            collecting results.
         """
         param = Param(warm_up_period=warm_up_period,
                       data_collection_period=1500)
@@ -211,11 +204,24 @@ def test_changing_occupancy():
     Inspired by `test_arrivals_decrease` in
     github.com/pythonhealthdatascience/pydesrap_mms/.
     """
+    def run_model(mean_value):
+        """
+        Helper function to run model with specified mean ASU stroke IAT.
+
+        Parameters
+        ----------
+        mean_value : float
+            Mean ASU stroke IAT.
+        """
+        param = Param()
+        param.dist_config["asu_arrival_stroke"]["params"]["mean"] = mean_value
+        model = Model(param, run_number=0)
+        model.run()
+        return model
+
     # Run model with lots of stroke arrivals (IAT 1) and fewer (IAT 100)
-    initial_model = Model(Param(ASUArrivals(stroke=1)), run_number=0)
-    initial_model.run()
-    adj_model = Model(Param(ASUArrivals(stroke=100)), run_number=0)
-    adj_model.run()
+    initial_model = run_model(1)
+    adj_model = run_model(100)
 
     # Check that patient list is longer with more arrivals
     i_n = len(initial_model.patients)
@@ -304,8 +310,8 @@ def test_valid_cores(cores):
 
 def test_sampled_distributions():
     """
-    Ensure that the mean of sampled values from arrival_dist, los_dist, and
-    routing_dist are close to their expected values.
+    Ensure that the mean of sampled values from arrival, length of stay and
+    routing distributions are close to their expected values.
 
     Notes
     -----
@@ -315,36 +321,45 @@ def test_sampled_distributions():
     param = Param()
     model = Model(param, run_number=0)
 
-    # Test arrival_dist
-    for unit in ['asu', 'rehab']:
-        for patient_type, dist in model.arrival_dist[unit].items():
-            samples = [dist.sample() for _ in range(10000)]
-            observed_mean = np.mean(samples)
-            expected_mean = getattr(
-                getattr(param, f"{unit}_arrivals"), patient_type)
-            assert np.isclose(observed_mean, expected_mean, rtol=0.05), (
-                f"Expected mean arrival time for {unit} {patient_type} ≈ "
-                f"{expected_mean}, but got {observed_mean}.")
+    def test_mean(dist_type):
+        """
+        For all units and patient types of the specified distribution types,
+        check that the sampled mean is close to the expected mean.
 
-    # Test los_dist
-    for unit in ['asu', 'rehab']:
-        for patient_type, dist in model.los_dist[unit].items():
-            samples = [dist.sample() for _ in range(10000)]
-            observed_mean = np.mean(samples)
-            expected_mean = getattr(
-                getattr(param, f"{unit}_los"), patient_type)["mean"]
-            assert np.isclose(observed_mean, expected_mean, rtol=0.05), (
-                f"Expected mean LOS for {unit} {patient_type} ≈ "
-                f"{expected_mean}, but got {observed_mean}.")
+        Parameters
+        ----------
+        dist_type : str
+            Name of distributions to check (e.g. "arrival", "los").
+        """
+        for unit in ["asu", "rehab"]:
+            for patient_type, dist in model.dist[dist_type][unit].items():
+                # Get observed mean
+                samples = [dist.sample() for _ in range(10_000)]
+                observed = np.mean(samples)
+                # Get expected mean
+                dist_key = f"{unit}_{dist_type}_{patient_type}"
+                expected = param.dist_config[dist_key]["params"]["mean"]
+                # Compare the observed and expected mean
+                assert np.isclose(observed, expected, rtol=0.05), (
+                    f"Sample mean for {unit} {dist_type} {patient_type}: "
+                    f"{observed:.3f}, expected ≈ {expected:.3f}"
+                )
 
-    # Test routing_dist
-    for unit in ['asu', 'rehab']:
-        for patient_type, dist in model.routing_dist[unit].items():
-            samples = [dist.sample() for _ in range(10000)]
+    test_mean("arrival")
+    test_mean("los")
+
+    # Test routing distributions
+    for unit in ["asu", "rehab"]:
+        for patient_type, dist in model.dist["routing"][unit].items():
+            # Observed probabilities
+            samples = [dist.sample() for _ in range(10_000)]
             observed_probs = {dest: samples.count(dest) / len(samples)
                               for dest in set(samples)}
-            expected_probs = getattr(
-                getattr(param, f"{unit}_routing"), patient_type)
+            # Expected probabilities
+            key = f"{unit}_routing_{patient_type}"
+            values = param.dist_config[key]["params"]["values"]
+            freq = param.dist_config[key]["params"]["freq"]
+            expected_probs = dict(zip(values, freq))
             for dest in expected_probs:
                 # If a destination has a very low probability, it might not
                 # appear in samples. In that case, set the observed probability
