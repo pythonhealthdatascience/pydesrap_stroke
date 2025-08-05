@@ -15,9 +15,7 @@ import numpy as np
 import pytest
 from sim_tools.distributions import Exponential, Lognormal, DiscreteEmpirical
 
-from simulation.parameters import (
-    ASUArrivals, RehabArrivals, ASULOS, RehabLOS,
-    ASURouting, RehabRouting, Param)
+from simulation.parameters import Param
 from simulation.model import Model
 from simulation.runner import Runner
 from simulation.logging import SimLogger
@@ -27,24 +25,14 @@ from simulation.logging import SimLogger
 # Parameters
 # -----------------------------------------------------------------------------
 
-@pytest.mark.parametrize("class_to_test", [
-    ASUArrivals, RehabArrivals, ASULOS, RehabLOS,
-    ASURouting, RehabRouting, Param])
-def test_new_attribute(class_to_test):
+def test_new_attribute():
     """
-    Confirm that it's impossible to add new attributes to the classes.
-
-    Arguments:
-        class_to_test (class):
-            The class to be tested for attribute immutability.
+    Confirm that it's impossible to add new attributes.
     """
-    # Create an instance of the class
-    instance = class_to_test()
-
-    # Attempt to add a new attribute
+    param = Param()
     with pytest.raises(AttributeError,
                        match="only possible to modify existing attributes"):
-        setattr(instance, "new_entry", 3)
+        setattr(param, "new_entry", 3)
 
 
 def test_param_valid():
@@ -78,55 +66,6 @@ def test_param_errors(param, value, msg):
         model_param.check_param_validity()
 
 
-def test_arrival_params():
-    """
-    Test validation of arrival parameters.
-    """
-    model_param = Param(asu_arrivals=ASUArrivals(stroke=-5))
-    with pytest.raises(
-        ValueError,
-        match="Parameter 'stroke' from 'asu_arrivals' must be greater than 0"
-    ):
-        model_param.check_param_validity()
-
-
-def test_los_params():
-    """
-    Test validation of length of stay parameters.
-    """
-    model_param = Param(asu_los=ASULOS(neuro_mean=-2, neuro_sd=1))
-    with pytest.raises(
-        ValueError,
-        match=("Parameter 'mean' for 'neuro' in 'asu_los' must be greater " +
-               "than 0")
-    ):
-        model_param.check_param_validity()
-
-
-def test_routing_sum():
-    """
-    Test validation of routing probabilities sum.
-    """
-    model_param = Param(asu_routing=ASURouting(
-        tia_rehab=0.6, tia_esd=0.2, tia_other=0.1))
-    with pytest.raises(
-        ValueError,
-        match=("Routing probabilities for 'tia' in 'asu_routing' should sum " +
-               "to apx. 1")
-    ):
-        model_param.check_param_validity()
-
-
-def test_routing_range():
-    """
-    Test validation of routing probability ranges.
-    """
-    model_param = Param(asu_routing=ASURouting(
-        neuro_rehab=1.1, neuro_esd=0.1, neuro_other=-0.2))
-    with pytest.raises(ValueError, match="must be between 0 and 1"):
-        model_param.check_param_validity()
-
-
 # -----------------------------------------------------------------------------
 # Model
 # -----------------------------------------------------------------------------
@@ -138,18 +77,18 @@ def test_create_distributions():
     param = Param()
     model = Model(param, run_number=42)
 
-    # Check that all arrival distributions are Exponential
-    for _, unit_dict in model.arrival_dist.items():
+    # Check that all arrival distributions are exponential
+    for _, unit_dict in model.dist["arrival"].items():
         for patient_type in unit_dict:
             assert isinstance(unit_dict[patient_type], Exponential)
 
-    # Check that all length of stay distributions are Lognormal
-    for _, unit_dict in model.los_dist.items():
+    # Check that all length of stay distributions are lognormal
+    for _, unit_dict in model.dist["los"].items():
         for patient_type in unit_dict:
             assert isinstance(unit_dict[patient_type], Lognormal)
 
-    # Check that all routing distributions are Discrete
-    for _, unit_dict in model.routing_dist.items():
+    # Check that all routing distributions are discrete
+    for _, unit_dict in model.dist["routing"].items():
         for patient_type in unit_dict:
             assert isinstance(unit_dict[patient_type], DiscreteEmpirical)
 
@@ -166,9 +105,9 @@ def test_sampling_seed_reproducibility():
     model2 = Model(param, run_number=123)
 
     # Sample from a distribution in both models
-    samples1 = [model1.arrival_dist["asu"]["stroke"].sample()
+    samples1 = [model1.dist["arrival"]["asu"]["stroke"].sample()
                 for _ in range(10)]
-    samples2 = [model2.arrival_dist["asu"]["stroke"].sample()
+    samples2 = [model2.dist["arrival"]["asu"]["stroke"].sample()
                 for _ in range(10)]
 
     # Check that the samples are the same
