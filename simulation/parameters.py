@@ -39,6 +39,7 @@ class Param(RestrictAttributes):
     def __init__(
         self,
         parameter_file=None,
+        parameter_config=None,
         warm_up_period=365*3,  # 3 years
         data_collection_period=365*5,  # 5 years
         number_of_runs=150,
@@ -57,6 +58,8 @@ class Param(RestrictAttributes):
         parameter_file : str
             JSON file containing parameters to load to sim-tools
             DistributionRegistry.
+        parameter_config : dict
+            Dictionary of parameters (bypasses file loading if given).
         warm_up_period : int
             Length of the warm-up period (days).
         data_collection_period : int
@@ -76,22 +79,33 @@ class Param(RestrictAttributes):
             Path to save log to file. Note, if you use an existing .log
             file name, it will append to that log.
         """
-        # Get the default parameter_file path relative to this file
-        if parameter_file is None:
-            parameter_file = os.path.normpath(
-                os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)),
-                    "../inputs/parameters.json")
-            )
+        # Load configuration from dict if provided
+        if parameter_config is not None:
+            config = parameter_config
+        else:
+            # Fallback: load from file
+            if parameter_file is None:
+                parameter_file = os.path.normpath(
+                    os.path.join(
+                        os.path.dirname(os.path.abspath(__file__)),
+                        "../inputs/parameters.json")
+                )
+            with open(parameter_file, "r", encoding="utf-8") as f:
+                config = json.load(f)
 
-        # Load the distribution parameter dictionary from file, and wrap it in
-        # LockedDict to ensure that the set of top-level keys cannot be changed
-        # after loading. This prevents subtle bugs where a user might misspell
-        # a key when attempting to update a parameter, resulting in an
-        # unintended new key rather than modifying an existing parameter.
-        with open(parameter_file, "r", encoding="utf-8") as f:
-            config = json.load(f)
-        self.dist_config = LockedDict(config["simulation_parameters"])
+        # Accept either a config containing "simulation_parameters" or just
+        # the dict itself
+        if "simulation_parameters" in config:
+            sim_params = config["simulation_parameters"]
+        else:
+            sim_params = config
+
+        # Wrap params in LockedDict to ensure that the set of top-level keys
+        # cannot be changed after loading. This prevents subtle bugs where a
+        # user might misspell a key when attempting to update a parameter,
+        # resulting in an unintended new key rather than modifying an existing
+        # parameter.
+        self.dist_config = LockedDict(sim_params)
 
         # Set parameters
         self.warm_up_period = warm_up_period
