@@ -62,3 +62,65 @@ class RestrictAttributes(metaclass=RestrictAttributesMeta):
             )
         # If checks pass, set the attribute using the standard method
         object.__setattr__(self, name, value)
+
+
+class LockedDict(dict):
+    """
+    Wrapper that prevents adding or deleting top-level keys in a dictionary
+    after creation.
+    """
+    def __init__(self, *args, **kwargs):
+        """
+        Parameters
+        ----------
+        *args, **kwargs : any
+            Arguments passed to dict for initialisation. Top-level keys will
+            be locked.
+        """
+        super().__init__(*args, **kwargs)
+        self._locked_keys = set(self)
+
+    def __setitem__(self, key, value):
+        """
+        Restrict assignment to existing top-level keys.
+
+        Parameters
+        ----------
+        key : str
+            Top-level dictionary key.
+        value : any
+            Value to assign.
+
+        Raises
+        ------
+        KeyError
+            If key is not an original top-level key.
+        """
+        if key not in self._locked_keys:
+            raise KeyError(
+                f"Attempted to add or update key '{key}', which is not one of "
+                f"the original locked keys. This is likely due to a typo or "
+                f"unintended new parameter. Allowed top-level keys are: "
+                f"[{self._locked_keys}]"
+            )
+        super().__setitem__(key, value)
+
+    def __delitem__(self, key):
+        """
+        Prevent deletion of top-level keys.
+
+        Parameters
+        ----------
+        key : str
+            Top-level dictionary key.
+
+        Raises
+        ------
+        KeyError
+            Always, to disallow top-level key deletion.
+        """
+        raise KeyError(
+            f"Deletion of key '{key}' is not allowed. The set of top-level "
+            f"keys is locked to prevent accidental removal of expected "
+            f"parameters. Allowed top-level keys are: [{self._locked_keys}]"
+        )

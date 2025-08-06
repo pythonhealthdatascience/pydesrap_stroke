@@ -10,7 +10,7 @@ import os
 import time
 
 from simulation.logging import SimLogger
-from simulation.restrictattributes import RestrictAttributes
+from simulation.restrictattributes import RestrictAttributes, LockedDict
 
 
 class Param(RestrictAttributes):
@@ -84,10 +84,14 @@ class Param(RestrictAttributes):
                     "../inputs/parameters.json")
             )
 
-        # Import distribution parameter dictionary
+        # Load the distribution parameter dictionary from file, and wrap it in
+        # LockedDict to ensure that the set of top-level keys cannot be changed
+        # after loading. This prevents subtle bugs where a user might misspell
+        # a key when attempting to update a parameter, resulting in an
+        # unintended new key rather than modifying an existing parameter.
         with open(parameter_file, "r", encoding="utf-8") as f:
             config = json.load(f)
-        self.dist_config = config["simulation_parameters"]
+        self.dist_config = LockedDict(config["simulation_parameters"])
 
         # Set parameters
         self.warm_up_period = warm_up_period
