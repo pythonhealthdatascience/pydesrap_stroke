@@ -50,8 +50,7 @@ The simulation code is provided as a **package** within `simulation/`. There are
 To run the model with base parameters once or with replications:
 
 ```
-from simulation.parameters import Param
-from simulation.runner import Runner
+from simulation import Param, Runner
 
 param = Param()
 runner = Runner(param=param)
@@ -63,16 +62,10 @@ rep_results = runner.run_reps()
 Example altering the model parameters:
 
 ```
-from simulation.parameters import Param, ASUArrivals, RehabRouting
-from simulation.runner import Runner
+from simulation import Param, Runner
 
-# Modified one of the arrival rates, some routing probabilities, and the
-# number of replications
-param = Param(
-    asu_arrivals=ASUArrivals(tia=10),
-    rehab_routing=RehabRouting(neuro_esd=0.2, neuro_other=0.8),
-    number_of_runs=10
-)
+# Modify the number of replications
+param = Param(number_of_runs=10)
 runner = Runner(param=param)
 rep_results = runner.run_reps()
 ```

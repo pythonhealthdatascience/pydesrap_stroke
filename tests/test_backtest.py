@@ -9,9 +9,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from simulation.parameters import Param
-from simulation.model import Model
-from simulation.runner import Runner
+from simulation import Model, Param, Runner
 
 
 def test_model():

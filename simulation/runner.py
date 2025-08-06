@@ -6,7 +6,7 @@ from collections import Counter
 from joblib import Parallel, delayed, cpu_count
 import pandas as pd
 
-from simulation.model import Model
+from .model import Model
 
 
 class Runner:
