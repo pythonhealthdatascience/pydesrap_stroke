@@ -15,6 +15,48 @@ from simulation.model import Model
 from simulation.runner import Runner
 
 
+# -----------------------------------------------------------------------------
+# Modifying parameters
+# -----------------------------------------------------------------------------
+
+@pytest.fixture(name="testparam")
+def fixture_testparam():
+    """Fixture: returns a sample dictionary for LockedDict tests."""
+    config = {
+        "asu_arrival_stroke": {"class_name": "Exp", "params": {"mean": 1}},
+        "asu_arrival_tia": {"class_name": "Exp", "params": {"mean": 2}},
+    }
+    return Param(parameter_config=config)
+
+
+def test_param_modify_existing_key(testparam):
+    """Existing keys can be updated."""
+    testparam.dist_config["asu_arrival_stroke"]["params"]["mean"] = 9
+    assert testparam.dist_config["asu_arrival_stroke"]["params"]["mean"] == 9
+
+
+def test_param_rejects_new_key(testparam):
+    """Adding a new top-level key raises KeyError."""
+    with pytest.raises(KeyError):
+        testparam.dist_config["foo"] = {}
+
+
+def test_param_rejects_deletion(testparam):
+    """Deleting a key raises KeyError."""
+    with pytest.raises(KeyError):
+        del testparam.dist_config["asu_arrival_stroke"]
+
+
+def test_param_typo_key(testparam):
+    """Misspelled keys raise KeyError."""
+    with pytest.raises(KeyError):
+        testparam.dist_config["asu_arival_stroke"] = {}
+
+
+# -----------------------------------------------------------------------------
+# Running the model
+# -----------------------------------------------------------------------------
+
 @pytest.mark.parametrize("warm_up_period", [(0), (1)])
 def test_audit_length(warm_up_period):
     """
@@ -248,66 +290,6 @@ def test_changing_occupancy():
         f"saw {i_reh} for high and {a_reh} for low")
 
 
-def test_seed_stability():
-    """
-    Check that two runs using the same random seed return the same results.
-
-    Notes
-    -----
-    Adapted from `seed_seed_stability` in
-    github.com/pythonhealthdatascience/pydesrap_mms/.
-    """
-    # Run model twice, with same run number (and therefore same seed) each time
-    runner1 = Runner(param=Param())
-    result1 = runner1.run_single(run=33)
-    runner2 = Runner(param=Param())
-    result2 = runner2.run_single(run=33)
-
-    # Check that the dataframes are equal
-    pd.testing.assert_frame_equal(result1["asu"], result2["asu"])
-    pd.testing.assert_frame_equal(result1["rehab"], result2["rehab"])
-
-
-def test_parallel():
-    """
-    Check that sequential and parallel execution produce consistent results.
-
-    Notes
-    -----
-    Adapted from `test_parallel` in
-    github.com/pythonhealthdatascience/pydesrap_mms/.
-    """
-    # Sequential (1 core) and parallel (-1 cores) execution
-    results = {}
-    for mode, cores in [("seq", 1), ("par", -1)]:
-        param = Param(cores=cores)
-        runner = Runner(param)
-        results[mode] = runner.run_single(run=0)
-
-    # Verify results are identical
-    pd.testing.assert_frame_equal(results["seq"]["asu"],
-                                  results["par"]["asu"])
-    pd.testing.assert_frame_equal(results["seq"]["rehab"],
-                                  results["par"]["rehab"])
-
-
-@pytest.mark.parametrize("cores", [
-    (-2), (0), (cpu_count()), (cpu_count()+1)
-])
-def test_valid_cores(cores):
-    """
-    Check there is error handling for input of invalid number of cores.
-
-    Notes
-    -----
-    Copied from github.com/pythonhealthdatascience/pydesrap_mms/.
-    """
-    param = Param(cores=cores)
-    runner = Runner(param)
-    with pytest.raises(ValueError):
-        runner.run_reps()
-
-
 def test_sampled_distributions():
     """
     Ensure that the mean of sampled values from arrival, length of stay and
@@ -370,3 +352,71 @@ def test_sampled_distributions():
                     f"Expected routing probability for {unit} {patient_type} "
                     f"to {dest} ≈ {expected_probs[dest]}, but got "
                     f"{observed_prob}.")
+
+
+# -----------------------------------------------------------------------------
+# Seeds
+# -----------------------------------------------------------------------------
+
+def test_seed_stability():
+    """
+    Check that two runs using the same random seed return the same results.
+
+    Notes
+    -----
+    Adapted from `seed_seed_stability` in
+    github.com/pythonhealthdatascience/pydesrap_mms/.
+    """
+    # Run model twice, with same run number (and therefore same seed) each time
+    runner1 = Runner(param=Param())
+    result1 = runner1.run_single(run=33)
+    runner2 = Runner(param=Param())
+    result2 = runner2.run_single(run=33)
+
+    # Check that the dataframes are equal
+    pd.testing.assert_frame_equal(result1["asu"], result2["asu"])
+    pd.testing.assert_frame_equal(result1["rehab"], result2["rehab"])
+
+
+# -----------------------------------------------------------------------------
+# Parallel processing
+# -----------------------------------------------------------------------------
+
+def test_parallel():
+    """
+    Check that sequential and parallel execution produce consistent results.
+
+    Notes
+    -----
+    Adapted from `test_parallel` in
+    github.com/pythonhealthdatascience/pydesrap_mms/.
+    """
+    # Sequential (1 core) and parallel (-1 cores) execution
+    results = {}
+    for mode, cores in [("seq", 1), ("par", -1)]:
+        param = Param(cores=cores)
+        runner = Runner(param)
+        results[mode] = runner.run_single(run=0)
+
+    # Verify results are identical
+    pd.testing.assert_frame_equal(results["seq"]["asu"],
+                                  results["par"]["asu"])
+    pd.testing.assert_frame_equal(results["seq"]["rehab"],
+                                  results["par"]["rehab"])
+
+
+@pytest.mark.parametrize("cores", [
+    (-2), (0), (cpu_count()), (cpu_count()+1)
+])
+def test_valid_cores(cores):
+    """
+    Check there is error handling for input of invalid number of cores.
+
+    Notes
+    -----
+    Copied from github.com/pythonhealthdatascience/pydesrap_mms/.
+    """
+    param = Param(cores=cores)
+    runner = Runner(param)
+    with pytest.raises(ValueError):
+        runner.run_reps()
