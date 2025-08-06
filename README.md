@@ -7,7 +7,6 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15574906.svg)](https://doi.org/10.5281/zenodo.15574906)
 [![Tests](https://github.com/pythonhealthdatascience/pydesrap_stroke/actions/workflows/tests.yaml/badge.svg)](https://github.com/pythonhealthdatascience/pydesrap_stroke/actions/workflows/tests.yaml)
 [![Linting](https://github.com/pythonhealthdatascience/pydesrap_stroke/actions/workflows/lint.yaml/badge.svg)](https://github.com/pythonhealthdatascience/pydesrap_stroke/actions/workflows/lint.yaml)
-[![ORCID](https://img.shields.io/badge/ORCID_Amy_Heather-0000--0002--6596--3479-A6CE39?&logo=orcid&logoColor=white)](https://orcid.org/0000-0002-6596-3479)
 
 </div>
 
@@ -119,9 +118,9 @@ The other notebooks generate results for tests and illustrate other functionalit
 
 For this applied example, please cite either:
 
-> Heather, A. (2025). Stroke capacity planning model: python DES RAP. GitHub. https://github.com/pythonhealthdatascience/pydesrap_stroke.
+> Heather, A. Monks, T. (2025). Stroke capacity planning model: python DES RAP. GitHub. https://github.com/pythonhealthdatascience/pydesrap_stroke.
 >
-> Heather, A. (2025). Stroke capacity planning model: python DES RAP. Zenodo. https://doi.org/10.5281/zenodo.15574906.
+> Heather, A. Monks, T. (2025). Stroke capacity planning model: python DES RAP. Zenodo. https://doi.org/10.5281/zenodo.15574906.
 
 A `CITATION.cff` file is also provided.
 
@@ -131,6 +130,11 @@ A `CITATION.cff` file is also provided.
 
 * [![ORCID](https://img.shields.io/badge/ORCID-0000--0002--6596--3479-A6CE39?style=for-the-badge&logo=orcid&logoColor=white)](https://orcid.org/0000-0002-6596-3479)
 * [![GitHub](https://img.shields.io/badge/GitHub-amyheather-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/amyheather)
+
+**Tom Monks** - peer review of the repository.
+
+* [![ORCID](https://img.shields.io/badge/ORCID-0000--0003--2631--4481-A6CE39?style=for-the-badge&logo=orcid&logoColor=white)](https://orcid.org/0000-0003-2631-4481)
+* [![GitHub](https://img.shields.io/badge/GitHub-TomMonks-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/TomMonks)
 
 <br>
 
