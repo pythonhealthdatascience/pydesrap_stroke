@@ -15,10 +15,7 @@ import numpy as np
 import pytest
 from sim_tools.distributions import Exponential, Lognormal, DiscreteEmpirical
 
-from simulation.parameters import Param
-from simulation.model import Model
-from simulation.runner import Runner
-from simulation.logging import SimLogger
+from simulation import Model, Param, Runner, SimLogger
 
 
 # -----------------------------------------------------------------------------

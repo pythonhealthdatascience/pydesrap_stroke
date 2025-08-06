@@ -9,8 +9,9 @@ import json
 import os
 import time
 
-from simulation.logging import SimLogger
-from simulation.restrictattributes import RestrictAttributes, LockedDict
+from .lockeddict import LockedDict
+from .logging import SimLogger
+from .restrictattributes import RestrictAttributes
 
 
 class Param(RestrictAttributes):
