@@ -7,11 +7,11 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15574906.svg)](https://doi.org/10.5281/zenodo.15574906)
 [![Tests](https://github.com/pythonhealthdatascience/pydesrap_stroke/actions/workflows/tests.yaml/badge.svg)](https://github.com/pythonhealthdatascience/pydesrap_stroke/actions/workflows/tests.yaml)
 [![Linting](https://github.com/pythonhealthdatascience/pydesrap_stroke/actions/workflows/lint.yaml/badge.svg)](https://github.com/pythonhealthdatascience/pydesrap_stroke/actions/workflows/lint.yaml)
-[![ORCID](https://img.shields.io/badge/ORCID_Amy_Heather-0000--0002--6596--3479-A6CE39?&logo=orcid&logoColor=white)](https://orcid.org/0000-0002-6596-3479)
+[![Coverage](https://github.com/pythonhealthdatascience/pydesrap_stroke/raw/main/images/coverage-badge.svg)](https://github.com/pythonhealthdatascience/pydesrap_stroke/actions/workflows/tests.yaml)
 
 </div>
 
-This repository applies the [Python DES RAP Template](https://github.com/pythonhealthdatascience/pydesrap_mms) to a real-life example:
+This repository provides a reproducible analytical pipeline (RAP) that implements a real-life stroke service capacity planning model in python. It serves as a practical example, fully reproducible and aligned with RAP principles, based on the following study:
 
 > Monks T, Worthington D, Allen M, Pitt M, Stein K, James MA. A modelling tool for capacity planning in acute and community stroke services. BMC Health Serv Res. 2016 Sep 29;16(1):530. doi: [10.1186/s12913-016-1789-4](https://doi.org/10.1186/s12913-016-1789-4). PMID: 27688152; PMCID: PMC5043535.
 
@@ -30,16 +30,14 @@ git clone https://github.com/pythonhealthdatascience/pydesrap_stroke.git
 cd pydesrap_stroke
 ```
 
-Use the provided `environment.yaml` file to set up a Python environment with `conda`:
+Set up the Python environment using `conda` (recommended):
 
 ```
 conda env create --file environment.yaml
 conda activate
 ```
 
-The provided `environment.yaml` file is a snapshot of the environment used when creating the repository, including specific package versions. You can update this file if necessary, but be sure to test that everything continues to work as expected after any updates. Also note that some dependencies are not required for modelling, but instead served other purposes, like running `.ipynb` files and linting.
-
-As an alternative, a `requirements.txt` file is provided which can be used to set up the environment with `virtualenv`. This is used by GitHub actions, which run much faster with a virtual environment than a conda environment. However, we recommend locally installing the environment using conda, as it will also manage the Python version for you. If using `virtualenv`, it won't fetch a specific version of Python - so please note the version listed in `environment.yaml`.
+There is also a `requirements.txt` file which can be used to set up the environment with `virtualenv`, but this won't fetch a specific version of Python - so please note the version listed in `environment.yaml`.
 
 <br>
 
@@ -115,13 +113,19 @@ The other notebooks generate results for tests and illustrate other functionalit
 
 <br>
 
+## Community
+
+Curious about contributing? Check out the [contributing guidelines](CONTRIBUTING.md) to learn how you can help.
+
+<br>
+
 ## Citation
 
 For this applied example, please cite either:
 
-> Heather, A. (2025). Stroke capacity planning model: python DES RAP. GitHub. https://github.com/pythonhealthdatascience/pydesrap_stroke.
+> Heather, A. Monks, T. (2025). Stroke capacity planning model: python DES RAP. GitHub. https://github.com/pythonhealthdatascience/pydesrap_stroke.
 >
-> Heather, A. (2025). Stroke capacity planning model: python DES RAP. Zenodo. https://doi.org/10.5281/zenodo.15574906.
+> Heather, A. Monks, T. (2025). Stroke capacity planning model: python DES RAP. Zenodo. https://doi.org/10.5281/zenodo.15574906.
 
 A `CITATION.cff` file is also provided.
 
@@ -131,6 +135,11 @@ A `CITATION.cff` file is also provided.
 
 * [![ORCID](https://img.shields.io/badge/ORCID-0000--0002--6596--3479-A6CE39?style=for-the-badge&logo=orcid&logoColor=white)](https://orcid.org/0000-0002-6596-3479)
 * [![GitHub](https://img.shields.io/badge/GitHub-amyheather-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/amyheather)
+
+**Tom Monks** - peer review of the repository.
+
+* [![ORCID](https://img.shields.io/badge/ORCID-0000--0003--2631--4481-A6CE39?style=for-the-badge&logo=orcid&logoColor=white)](https://orcid.org/0000-0003-2631-4481)
+* [![GitHub](https://img.shields.io/badge/GitHub-TomMonks-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/TomMonks)
 
 <br>
 

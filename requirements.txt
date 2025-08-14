@@ -1,3 +1,4 @@
+genbadge==1.1.2
 ipykernel==6.29.5
 jinja2==3.1.5
 joblib==1.4.2
@@ -11,8 +12,9 @@ pip==25.0
 plotly_express==0.4.1
 pylint==3.3.4
 pytest==8.3.4
+pytest-cov==6.2.1
 pytest-xdist==3.6.1
 rich==13.9.4
 simpy==4.1.1
-sim-tools==0.9.1
+sim-tools==0.10.0
 -e .[dev]
