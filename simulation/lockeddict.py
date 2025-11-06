@@ -43,6 +43,22 @@ class LockedDict(UserDict):
         self._locked_keys = set(self.data)
         self._locked_keys_initialised = True
 
+    def __setattr__(self, name, value):
+        """
+        Block silent attribute assignment by only allowing internal, private
+        and known base-class-needed attributes.
+
+        This avoids silent failure when users try to set dict.new_attribute,
+        where it does not change the dictionary as it set an attribute.
+        """
+        if name.startswith("_") or name == "data":
+            super().__setattr__(name, value)
+        else:
+            raise AttributeError(
+                f"Cannot set attribute '{name}'. "
+                f"Use item syntax: obj['{name}'] = value"
+            )
+
     def __setitem__(self, key, value):
         """
         Restrict assignment to existing top-level keys.

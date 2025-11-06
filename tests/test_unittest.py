@@ -15,7 +15,7 @@ import numpy as np
 import pytest
 from sim_tools.distributions import Exponential, Lognormal, DiscreteEmpirical
 
-from simulation import Model, Param, Runner, SimLogger
+from simulation import LockedDict, Model, Param, Runner, SimLogger
 
 
 # -----------------------------------------------------------------------------
@@ -247,3 +247,19 @@ def test_invalid_file_extension():
     """
     with pytest.raises(ValueError):
         SimLogger(log_to_file=True, file_path="test.txt")
+
+
+# -----------------------------------------------------------------------------
+# LockedDict
+# -----------------------------------------------------------------------------
+
+def test_lockeddict_attribute():
+    """
+    Setting a value using dot-notation should fail and raise an error.
+    """
+    ld = LockedDict({"a": 1, "b": 2})
+
+    with pytest.raises(AttributeError) as e:
+        ld.a = 99
+
+    assert "Cannot set attribute" in str(e) and "Use item syntax" in str(e)

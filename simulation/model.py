@@ -1,5 +1,12 @@
 """
 Defines the Model class for simulating patient flows and unit operations.
+
+Acknowledgements
+----------------
+This code is based on https://github.com/pythonhealthdatascience/pydesrap_mms,
+which itself was adapted from Sammi Rosser and Dan Chalk (2024) HSMA - the
+little book of DES (https://github.com/hsma-programme/hsma6_des_book)
+(MIT Licence).
 """
 
 import simpy
