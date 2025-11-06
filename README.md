@@ -11,6 +11,14 @@
 
 </div>
 
+<br>
+
+This repository is an example accompanying the [**DES RAP Book**](https://github.com/pythonhealthdatascience/des_rap_book) — an open educational resource on reproducible discrete-event simulation (DES) in Python and R. The book demonstrates best practices for building, validating, and sharing DES models within a reproducible analytical pipeline (RAP). The `pydesrap_stroke` model illustrates how these principles can be applied to a real-world healthcare capacity planning problem.
+
+<br>
+
+## Repository overview
+
 This repository provides a reproducible analytical pipeline (RAP) that implements a real-life stroke service capacity planning model in python. It serves as a practical example, fully reproducible and aligned with RAP principles, based on the following study:
 
 > Monks T, Worthington D, Allen M, Pitt M, Stein K, James MA. A modelling tool for capacity planning in acute and community stroke services. BMC Health Serv Res. 2016 Sep 29;16(1):530. doi: [10.1186/s12913-016-1789-4](https://doi.org/10.1186/s12913-016-1789-4). PMID: 27688152; PMCID: PMC5043535.
@@ -21,7 +29,9 @@ Model diagram:
 
 <br>
 
-## Installation
+## Usage and reproduction instructions
+
+<details><summary><b>Installation</b></summary>
 
 Clone the repository locally:
 
@@ -39,9 +49,11 @@ conda activate
 
 There is also a `requirements.txt` file which can be used to set up the environment with `virtualenv`, but this won't fetch a specific version of Python - so please note the version listed in `environment.yaml`.
 
+</details>
+
 <br>
 
-## How to run
+<details><summary><b>How to run</b></summary>
 
 The simulation code is provided as a **package** within `simulation/`. There are notebooks executing the model and analysing the results in `notebooks/`.
 
@@ -68,7 +80,11 @@ runner = Runner(param=param)
 rep_results = runner.run_reps()
 ```
 
-### Generating the results from the article
+</details>
+
+<br>
+
+<details><summary><b>Generating the results from the article</b></summary>
 
 The original study used Simul8. Each of the outputs from that article have been replicated in this repository using Python:
 
@@ -103,23 +119,23 @@ From this repository:
 
 ![](outputs/figure3_asu.png)
 
+</details>
+
 <br>
 
-## Run time and machine specification
+<details><summary><b>Run time and machine specification</b></summary>
 
 The run time for this analysis (`notebooks/analysis.ipynb`) is 10 seconds. This was on an Intel Core i7-12700H, 32GB RAM, Ubuntu 24.04.1.
 
 The other notebooks generate results for tests and illustrate other functionality (e.g. importing parameters from csv, running with logs), and these just take a second or two.
 
-<br>
-
-## Community
-
-Curious about contributing? Check out the [contributing guidelines](CONTRIBUTING.md) to learn how you can help.
+</details>
 
 <br>
 
-## Citation
+## Project details and credits
+
+### How to cite the repository
 
 For this applied example, please cite either:
 
@@ -129,7 +145,7 @@ For this applied example, please cite either:
 
 A `CITATION.cff` file is also provided.
 
-**Contributors:**
+### Contributors
 
 **Amy Heather** - developed the repository.
 
@@ -141,14 +157,14 @@ A `CITATION.cff` file is also provided.
 * [![ORCID](https://img.shields.io/badge/ORCID-0000--0003--2631--4481-A6CE39?style=for-the-badge&logo=orcid&logoColor=white)](https://orcid.org/0000-0003-2631-4481)
 * [![GitHub](https://img.shields.io/badge/GitHub-TomMonks-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/TomMonks)
 
-<br>
-
-## Licence
+### Licence
 
 MIT Licence. See `LICENSE` for details.
 
-<br>
+### Community
 
-## Funding
+Curious about contributing? Check out the [contributing guidelines](CONTRIBUTING.md) to learn how you can help.
+
+### Funding
 
 This project was developed as part of the project STARS: Sharing Tools and Artefacts for Reproducible Simulations. It is supported by the Medical Research Council [grant number [MR/Z503915/1](https://gtr.ukri.org/projects?ref=MR%2FZ503915%2F1)].
