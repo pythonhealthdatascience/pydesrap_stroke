@@ -1,5 +1,12 @@
 """
 Run multiple replications of the simulation.
+
+Acknowledgements
+----------------
+This code is based on https://github.com/pythonhealthdatascience/pydesrap_mms,
+which itself was adapted from Sammi Rosser and Dan Chalk (2024) HSMA - the
+little book of DES (https://github.com/hsma-programme/hsma6_des_book)
+(MIT Licence).
 """
 
 from collections import Counter
@@ -118,11 +125,11 @@ class Runner:
 
         Returns
         -------
-        result : dict of str -> pd.DataFrame
+        result : dict of str
             Dictionary containing concatenated occupancy dataframes for each
             unit (e.g., 'asu' and 'rehab'), with an added 'run' column
             indicating the replication.
-        overall : dict of str -> pd.DataFrame
+        overall : dict of str
             Dictionary containing summary statistics for each unit, including
             frequency, percentage, cumulative percentage, and probability of
             delay.
