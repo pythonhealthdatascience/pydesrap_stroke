@@ -22,5 +22,5 @@ dependencies:
   - pip:
     - genbadge==1.1.2
     - kaleido==1.0.0
-    - sim-tools==0.10.0
+    - sim-tools==1.0.0
     - -e .[dev]
