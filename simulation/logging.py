@@ -16,18 +16,19 @@ class SimLogger:
     """
     Provides log of events as the simulation runs.
 
-    Attributes:
-        log_to_console (boolean):
-            Whether to print log messages to the console.
-        log_to_file (boolean):
-            Whether to save log to a file.
-        file_path (str):
-            Path to save log to file.
-        sanitise (boolean):
-            Whether to sanitise dictionaries to remove memory addresses in
-            logs, default False.
-        logger (logging.Logger):
-            The logging instance used for logging messages.
+    Attributes
+    ----------
+    log_to_console : boolean
+        Whether to print log messages to the console.
+    log_to_file : boolean
+        Whether to save log to a file.
+    file_path : str
+        Path to save log to file.
+    sanitise : boolean
+        Whether to sanitise dictionaries to remove memory addresses in logs,
+        default False.
+    logger : logging.Logger
+        The logging instance used for logging messages.
     """
     def __init__(self, log_to_console=False, log_to_file=False,
                  file_path=("../outputs/logs/" +
@@ -36,18 +37,19 @@ class SimLogger:
         """
         Initialise the Logger class.
 
-        Arguments:
-            log_to_console (boolean):
-                Whether to print log messages to the console.
-            log_to_file (boolean):
-                Whether to save log to a file.
-            file_path (str):
-                Path to save log to file. Note, if you use an existing .log
-                file name, it will append to that log. Defaults to filename
-                based on current date and time, and folder "../outputs/log/".
-            sanitise (boolean):
-                Whether to sanitise dictionaries to remove memory addresses
-                in logs, default False.
+        Parameters
+        ----------
+        log_to_console : boolean
+            Whether to print log messages to the console.
+        log_to_file : boolean
+            Whether to save log to a file.
+        file_path : str
+            Path to save log to file. Note, if you use an existing .log
+            file name, it will append to that log. Defaults to filename
+            based on current date and time, and folder "../outputs/log/".
+        sanitise : boolean
+            Whether to sanitise dictionaries to remove memory addresses in
+            logs, default False.
         """
         self.log_to_console = log_to_console
         self.log_to_file = log_to_file
@@ -69,8 +71,10 @@ class SimLogger:
         """
         Validate the log file path.
 
-        Raises:
-            ValueError: If log path is invalid.
+        Raises
+        ------
+        ValueError
+            If log path is invalid.
         """
         # Check if directory exists
         directory = os.path.dirname(self.file_path)
@@ -123,15 +127,16 @@ class SimLogger:
         """
         Sanitise object references to avoid memory addresses in logs.
 
-        Arguments:
-            obj (object):
-                Object to sanitise
+        Parameters
+        ----------
+        obj : object
+            Object to sanitise
 
-        Returns:
-            str:
-                Sanitised version of the object. If it"s an object,
-                it returns the class name; otherwise, it returns the
-                object itself.
+        Returns
+        -------
+        str
+            Sanitised version of the object. If it"s an object, it returns the
+            class name; otherwise, it returns the object itself.
         """
         # Only sanitise custom objects (not basic types like int, str, etc.)
         if isinstance(obj, object) and not isinstance(
@@ -145,11 +150,12 @@ class SimLogger:
         """
         Log a message if logging is enabled.
 
-        Arguments:
-            msg (str):
-                Message to log.
-            sim_time (float|None, optional):
-                Current simulation time. If provided, prints before message.
+        Parameters
+        ----------
+        msg : str
+            Message to log.
+        sim_time : float or None
+            Current simulation time. If provided, prints before message.
         """
         # Sanitise (if enabled) and pretty format dictionaries
         if isinstance(msg, dict):
