@@ -29,8 +29,8 @@
                                             'other': Discrete(values=['esd', 'other'], freq=[0.13, 0.88]),
                                             'stroke': Discrete(values=['esd', 'other'], freq=[0.4, 0.6]),
                                             'tia': Discrete(values=['other'], freq=[1.0])}}},
-    'env': <simpy.core.Environment object at 0x73560a6756a0>,
-    'param': <simulation.parameters.Param object at 0x7356cadaeba0>,
+    'env': <simpy.core.Environment object at 0x78e2d6a15d30>,
+    'param': <simulation.parameters.Param object at 0x78e3ac18ef90>,
     'patients': [],
     'rehab_occupancy': 0,
     'run_number': 0}
@@ -133,7 +133,7 @@ Parameters:
                        'rehab_routing_tia': {   'class_name': 'DiscreteEmpirical',
                                                 'params': {   'freq': [1.0],
                                                               'values': [   'other']}}},
-    'logger': <simulation.logging.SimLogger object at 0x73560a8eb0e0>,
+    'logger': <simulation.logging.SimLogger object at 0x78e2d6c77770>,
     'number_of_runs': 150,
     'warm_up_period': 15}
 Logger:
