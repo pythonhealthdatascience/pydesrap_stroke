@@ -19,7 +19,10 @@ Stable release, with minor changes from 0.2.0 including quality assurance docume
 
 ### Fixed
 
-* Upgraded `nbconvert` (security issue with 7.16.6 - upgraded to 7.17.0).
+* Upgraded packages to address security risks identified by GitHub Dependabot:
+    * `nbconvert` (7.16.6 to 7.17.0).
+    * `pip` (25.0 to 26.0.1).
+    * `jinja2` (3.1.5 to 3.1.6).
 * Upgraded `genbadge` (`pkg_resources` warning with 1.1.2 - upgraded to 1.1.3).
 
 ## v0.2.0 - 2025-11-06
