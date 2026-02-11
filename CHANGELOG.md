@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v1.0.0 - 2026-02-11
 
-Stable release, with minor changes from 0.2.0 including quality assurance documentation, bash script simplification, and a security fix.
+Stable release, with minor changes from 0.2.0 including quality assurance documentation, bash script simplification, and security and bug fixes.
 
 ### Added
 
@@ -20,6 +20,7 @@ Stable release, with minor changes from 0.2.0 including quality assurance docume
 ### Fixed
 
 * Upgraded `nbconvert` (security issue with 7.16.6 - upgraded to 7.17.0).
+* Upgraded `genbadge` (`pkg_resources` warning with 1.1.2 - upgraded to 1.1.3).
 
 ## v0.2.0 - 2025-11-06
 
