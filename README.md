@@ -125,7 +125,7 @@ From this repository:
 
 <details><summary><b>Run time and machine specification</b></summary>
 
-The run time for this analysis (`notebooks/analysis.ipynb`) is 10 seconds. This was on an Intel Core i7-12700H, 32GB RAM, Ubuntu 24.04.1.
+The run time for this analysis (`notebooks/analysis.ipynb`) is 38 seconds. This was on an Intel Core i7-12700H, 32GB RAM, Ubuntu 24.04.1.
 
 The other notebooks generate results for tests and illustrate other functionality (e.g. importing parameters from csv, running with logs), and these just take a second or two.
 
