@@ -2,7 +2,7 @@
 SimPy Discrete-Event Simulation (DES) Model.
 """
 
-__version__ = "0.1.0"
+__version__ = "1.0.0"
 
 
 # This section allows us to import using e.g. `from simulation import Model`,

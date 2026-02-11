@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html). Dates formatted as YYYY-MM-DD as per [ISO standard](https://www.iso.org/iso-8601-date-and-time-format.html).
 
+## v1.0.0 - 2026-02-11
+
+Stable release, with minor changes from 0.2.0 including quality assurance documentation, bash script simplification, and a security fix.
+
+### Added
+
+* Add `docs/quality_assurance.md`.
+
+### Changed
+
+* Simplified `run_notebooks.sh`.
+
+### Fixed
+
+* Upgraded `nbconvert` (security issue with 7.16.6 - upgraded to 7.17.0).
+
 ## v0.2.0 - 2025-11-06
 
 This release has some small additions (e.g., data dictionary, coverage), alongside lots of refactoring and changes (e.g., parameters in JSON, using `DistributionRegistry`, renaming repository, using updated version of `sim-tools`).
