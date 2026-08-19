@@ -5,7 +5,6 @@ dependencies:
   - ipykernel=6.29.5
   - jinja2=3.1.6
   - joblib=1.4.2
-  - kaleido=1.3.0
   - nbconvert=7.17.1
   - nbformat=5.10.4
   - nbqa=1.9.0
@@ -22,6 +21,6 @@ dependencies:
   - simpy=4.1.1
   - pip:
     - genbadge==1.1.3
-    - kaleido==1.0.0
+    - kaleido==1.3.0
     - sim-tools==1.0.0
     - -e .[dev]
